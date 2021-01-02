@@ -1,0 +1,5 @@
+def variable = "hello world";
+
+prount("hello world");
+prount(variable);
+prount("variable =", variable);

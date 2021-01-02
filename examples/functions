@@ -1,0 +1,6 @@
+func doSomething()
+{
+    prount("string");
+};
+
+doSomething();
