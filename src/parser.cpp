@@ -94,6 +94,18 @@ std::shared_ptr<AST> Parser::parse_function_definition()
 	ast->function_definition_name = prevToken.m_value;
 
 	eat(TokenType::TOKEN_LPAREN);
+
+	std::shared_ptr<AST> arg = parse_variable();
+	ast->function_definition_params.emplace_back(arg);
+
+	while (currentToken.m_type == TokenType::TOKEN_COMMA)
+	{
+		eat(TokenType::TOKEN_COMMA);
+
+		auto arg = parse_variable();
+		ast->function_definition_params.emplace_back(arg);
+	}
+
 	eat(TokenType::TOKEN_RPAREN);
 
 	eat(TokenType::TOKEN_LBRACE);
@@ -192,7 +204,7 @@ void Parser::init_error_values(std::shared_ptr<AST> node)
 {
 	node->error_arrow = lexer.display_issue();
 	node->error_line_contents = lexer.collect_line();
-	node->error_index = lexer.prev_index;
+	node->error_index = lexer.index;
 	node->error_start_index = lexer.startIndex;
 	node->error_line_num = lexer.lineNum;
 }

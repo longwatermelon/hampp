@@ -99,6 +99,33 @@ std::shared_ptr<AST> Visitor::visit_func_call(std::shared_ptr<AST> node)
 
 	}
 
+	if (func_def->function_definition_params.size() != node->function_call_args.size())
+	{
+		std::stringstream err;
+		std::string param_display;
+		for (auto& param : func_def->function_definition_params)
+		{
+			param_display += param->variable_name;
+			param_display += ", ";
+		}
+		param_display.erase(param_display.size() - 2, param_display.size());
+		err << "Line " << node->error_line_num << ":\n" << node->error_line_contents << "\n" << "Error: Function '" << func_def->function_definition_name << "' takes " << func_def->function_definition_params.size() << " arguments (" << param_display << ") but " << node->function_call_args.size() << " arguments were supplied.\n";
+		throw std::runtime_error(err.str());
+	}
+
+	for (int i = 0; i < node->function_call_args.size(); ++i)
+	{
+		std::shared_ptr<AST> var = func_def->function_definition_params[i];
+		std::shared_ptr<AST> value = node->function_call_args[i];
+
+		const auto vardef = std::make_shared<AST>(AstType::AST_VARIABLE_DEFINITION);
+		vardef->variable_definition_value = value;
+
+		vardef->variable_definition_name = var->variable_name;
+
+		visit_vardef(vardef);
+	}
+
 	return visit(func_def->function_definition_body);
 }
 

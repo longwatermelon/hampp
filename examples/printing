@@ -1,5 +1,3 @@
-def variable = "hello world";
-
-prount("hello world");
-prount(variable);
-prount("variable =", variable);
+def name = "test";
+prount(name);
+prount("name =", name);

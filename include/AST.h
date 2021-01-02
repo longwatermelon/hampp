@@ -60,6 +60,7 @@ struct AST
 	// function definition
 	std::string function_definition_name;
 	std::shared_ptr<AST> function_definition_body;
+	std::vector<std::shared_ptr<AST>> function_definition_params;
 
 	// function call
 	std::string function_call_name;

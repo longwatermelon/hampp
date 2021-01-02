@@ -1,0 +1,6 @@
+func funcWithArgs(x, y)
+{
+    prount(x, y);
+};
+
+funcWithArgs("x value", "y value");
