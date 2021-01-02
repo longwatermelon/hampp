@@ -96,7 +96,7 @@ Token Lexer::get_next_token()
 
 std::string Lexer::collect_line()
 {
-	int idx = index;
+	unsigned idx = index;
 	while ((contents.at(idx)) != 10 && idx < contents.size() - 1)
 	{
 		++idx;
@@ -110,7 +110,7 @@ std::string Lexer::collect_line()
 std::string Lexer::display_issue()
 {
 	std::string str;
-	for (int i = startIndex; i < prev_index; ++i)
+	for (unsigned i = startIndex; i < prev_index; ++i)
 	{
 		str += ' ';
 	}
