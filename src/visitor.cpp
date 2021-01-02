@@ -38,7 +38,7 @@ std::shared_ptr<AST> Visitor::visit(std::shared_ptr<AST> node)
 	case AstType::AST_NOOP: return node;
 	}
 	
-	throw std::runtime_error("uncaught statement of type " + AstToStr(node->type) + "\n");
+	throw std::runtime_error("Uncaught statement of type " + AstToStr(node->type) + "\n");
 	return nullptr;
 }
 
@@ -59,7 +59,7 @@ std::shared_ptr<AST> Visitor::visit_var(std::shared_ptr<AST> node)
 	}
 
 	std::stringstream msg;
-	msg << "undefined variable '" << node->variable_name << "' on line " <<
+	msg << "Undefined variable '" << node->variable_name << "' on line " <<
 		node->error_line_num << ":\n" << node->error_line_contents << "\n" << node->error_arrow << "\n";
 	throw std::runtime_error(msg.str());
 	return nullptr;
@@ -92,7 +92,7 @@ std::shared_ptr<AST> Visitor::visit_func_call(std::shared_ptr<AST> node)
 	if (func_def == nullptr)
 	{
 		std::stringstream msg;
-		msg << "undefined method '" << node->function_call_name << "' on line " 
+		msg << "Undefined method '" << node->function_call_name << "' on line " 
 			<< node->error_line_num << ":\n" << node->error_line_contents << "\n" 
 			<< node->error_arrow << std::endl;
 		throw std::runtime_error(msg.str());
