@@ -1,3 +1,3 @@
 # hampp
 
-purely hampp source code without any sln files
+ham written in cpp
