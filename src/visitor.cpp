@@ -44,6 +44,16 @@ std::shared_ptr<AST> Visitor::visit(std::shared_ptr<AST> node)
 
 std::shared_ptr<AST> Visitor::visit_vardef(std::shared_ptr<AST> node)
 {
+	for (auto& def : variable_defs)
+	{
+		if (node->function_definition_name == def->function_definition_name)
+		{
+			std::stringstream err;
+			err << "Reinitialized a variable on line " << node->error_line_num << ":\n" << node->error_line_contents << "\n"
+				<< "\n" << "Variable previously initialized on line " << def->error_line_num << ":\n" << def->error_line_contents << "\n";
+			throw std::runtime_error(err.str());
+		}
+	}
 	variable_defs.emplace_back(node);
 	return node;
 }
