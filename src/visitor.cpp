@@ -38,7 +38,7 @@ std::shared_ptr<AST> Visitor::visit(std::shared_ptr<AST> node)
 	case AstType::AST_NOOP: return node;
 	}
 	
-	throw std::runtime_error("Uncaught statement of type " + AstToStr(node->type) + "\n");
+	throw std::runtime_error("Uncaught statement\n");
 	return nullptr;
 }
 
