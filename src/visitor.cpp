@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <algorithm>
 
 Visitor::Visitor()
 {
@@ -22,6 +23,26 @@ std::shared_ptr<AST> Visitor::builtin_function_print(std::vector<std::shared_ptr
 
 	std::cout << std::endl;
 
+	return std::make_shared<AST>(AstType::AST_NOOP);
+}
+
+std::shared_ptr<AST> Visitor::builtin_function_destroy(std::vector<std::shared_ptr<AST>> args)
+{
+	for (auto& arg : args)
+	{
+		std::shared_ptr<AST> ast = visit_var(arg);
+		std::vector<std::shared_ptr<AST>>::iterator iter = std::find(variable_defs.begin(), variable_defs.end(), ast);
+		if (iter != variable_defs.end())
+		{
+			int index = std::distance(variable_defs.begin(), iter);
+			variable_defs.erase(variable_defs.begin() + index);
+		}
+		else
+		{
+			variable_defs.erase(variable_defs.begin());
+		}
+	}
+	
 	return std::make_shared<AST>(AstType::AST_NOOP);
 }
 
@@ -46,7 +67,7 @@ std::shared_ptr<AST> Visitor::visit_vardef(std::shared_ptr<AST> node)
 {
 	for (auto& def : variable_defs)
 	{
-		if (node->function_definition_name == def->function_definition_name)
+		if (node->variable_definition_name == def->variable_definition_name)
 		{
 			std::stringstream err;
 			err << "Reinitialized a variable on line " << node->error_line_num << ":\n" << node->error_line_contents << "\n"
@@ -95,6 +116,11 @@ std::shared_ptr<AST> Visitor::visit_func_call(std::shared_ptr<AST> node)
 	if (node->function_call_name == "prount")
 	{
 		return builtin_function_print(node->function_call_args);
+	}
+
+	if (node->function_call_name == "destroy")
+	{
+		return builtin_function_destroy(node->function_call_args);
 	}
 
 	std::shared_ptr<AST> func_def = get_func_def(node->function_call_name);

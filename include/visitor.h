@@ -9,6 +9,7 @@ struct Visitor
 	Visitor();
 
 	std::shared_ptr<AST> builtin_function_print(std::vector<std::shared_ptr<AST>> args);
+	std::shared_ptr<AST> builtin_function_destroy(std::vector< std::shared_ptr<AST>> args);
 
 	std::vector<std::shared_ptr<AST>> variable_defs;
 	std::vector<std::shared_ptr<AST>> function_defs;

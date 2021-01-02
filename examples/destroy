@@ -1,0 +1,10 @@
+def variable = "variable";
+def variable2 = "variable 2";
+prount(variable, variable2);
+
+destroy(variable, variable2);
+
+def variable = "new value";
+def variable2 = "new variable2 value";
+
+prount(variable, variable2);
