@@ -1,1 +1,6 @@
-prount(true);
+func doSomething()
+{
+    prount("your mom");
+};
+
+doSomething();

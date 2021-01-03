@@ -12,6 +12,13 @@ Visitor::Visitor()
 	ast_bool->bool_value = true;
 	const_true->variable_definition_value = ast_bool;
 	visit(const_true);
+
+	const auto const_false = std::make_shared<AST>(AstType::AST_VARIABLE_DEFINITION);
+	const auto ast_bool_false = std::make_shared<AST>(AstType::AST_BOOL);
+	const_false->variable_definition_name = "false";
+	ast_bool_false->bool_value = false;
+	const_false->variable_definition_value = ast_bool_false;
+	visit(const_false);
 }
 
 std::shared_ptr<AST> Visitor::builtin_function_print(std::vector<std::shared_ptr<AST>> args)

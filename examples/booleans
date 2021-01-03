@@ -1,0 +1,5 @@
+prount(true);
+prount(false);
+
+def TRUE = true;
+prount(TRUE);
