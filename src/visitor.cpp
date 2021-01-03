@@ -30,7 +30,7 @@ std::shared_ptr<AST> Visitor::builtin_function_destroy(std::vector<std::shared_p
 {
 	for (auto& arg : args)
 	{
-		std::shared_ptr<AST> ast = visit_var(arg);
+		std::shared_ptr<AST> ast = get_var_from_value(arg->string_value);
 		std::vector<std::shared_ptr<AST>>::iterator iter = std::find(variable_defs.begin(), variable_defs.end(), ast);
 		if (iter != variable_defs.end())
 		{
@@ -75,6 +75,7 @@ std::shared_ptr<AST> Visitor::visit_vardef(std::shared_ptr<AST> node)
 			throw std::runtime_error(err.str());
 		}
 	}
+
 	variable_defs.emplace_back(node);
 	return node;
 }
@@ -83,7 +84,7 @@ std::shared_ptr<AST> Visitor::visit_var(std::shared_ptr<AST> node)
 {
 	for (auto& def : variable_defs)
 	{
-		if (def->variable_definition_name == node->variable_name)
+		if (def->variable_definition_name == node->variable_name || def->variable_definition_name == node->variable_definition_name)
 		{
 			return visit(def->variable_definition_value);
 		}
@@ -93,6 +94,20 @@ std::shared_ptr<AST> Visitor::visit_var(std::shared_ptr<AST> node)
 	msg << "Undefined variable '" << node->variable_name << "' on line " <<
 		node->error_line_num << ":\n" << node->error_line_contents << "\n" << node->error_arrow << "\n";
 	throw std::runtime_error(msg.str());
+	return nullptr;
+}
+
+std::shared_ptr<AST> Visitor::get_var_from_value(std::string value)
+{
+	for (auto& def : variable_defs)
+	{
+		if (def->string_value == value)
+		{
+			return def;
+		}
+	}
+
+
 	return nullptr;
 }
 
@@ -162,7 +177,10 @@ std::shared_ptr<AST> Visitor::visit_func_call(std::shared_ptr<AST> node)
 		visit_vardef(vardef);
 	}
 
-	return visit(func_def->function_definition_body);
+	const auto ast = visit(func_def->function_definition_body);
+	builtin_function_destroy(node->function_call_args);
+
+	return ast;
 }
 
 std::shared_ptr<AST> Visitor::get_func_def(const std::string name)
