@@ -1,6 +1,1 @@
-func doSomething()
-{
-    prount("string");
-};
-
-doSomething();
+prount(true);

@@ -6,6 +6,12 @@
 
 Visitor::Visitor()
 {
+	const auto const_true = std::make_shared<AST>(AstType::AST_VARIABLE_DEFINITION);
+	const auto ast_bool = std::make_shared<AST>(AstType::AST_BOOL);
+	const_true->variable_definition_name = "true";
+	ast_bool->bool_value = true;
+	const_true->variable_definition_value = ast_bool;
+	visit(const_true);
 }
 
 std::shared_ptr<AST> Visitor::builtin_function_print(std::vector<std::shared_ptr<AST>> args)
@@ -17,6 +23,7 @@ std::shared_ptr<AST> Visitor::builtin_function_print(std::vector<std::shared_ptr
 		switch (ast->type)
 		{
 		case AstType::AST_STRING: std::cout << ast->string_value << " "; break;
+		case AstType::AST_BOOL: std::cout << ast->bool_value << " "; break;
 		default: std::cout << ast; break;
 		}
 	}
@@ -55,6 +62,7 @@ std::shared_ptr<AST> Visitor::visit(std::shared_ptr<AST> node)
 	case AstType::AST_FUNCTION_CALL: return visit_func_call(node);
 	case AstType::AST_FUNCTION_DEFINITION: return add_func_def(node);
 	case AstType::AST_STRING: return visit_str(node);
+	case AstType::AST_BOOL: return visit_bool(node);
 	case AstType::AST_COMPOUND: return visit_compound(node);
 	case AstType::AST_NOOP: return node;
 	}
@@ -112,6 +120,11 @@ std::shared_ptr<AST> Visitor::get_var_from_value(std::string value)
 }
 
 std::shared_ptr<AST> Visitor::visit_str(std::shared_ptr<AST> node)
+{
+	return node;
+}
+
+std::shared_ptr<AST> Visitor::visit_bool(std::shared_ptr<AST> node)
 {
 	return node;
 }

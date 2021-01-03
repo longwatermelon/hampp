@@ -24,6 +24,8 @@ struct Visitor
 
 	std::shared_ptr<AST> visit_str(std::shared_ptr<AST> node);
 
+	std::shared_ptr<AST> visit_bool(std::shared_ptr<AST> node);
+
 	std::shared_ptr<AST> visit_compound(std::shared_ptr<AST> node);
 
 	std::shared_ptr<AST> visit_func_call(std::shared_ptr<AST> node);
