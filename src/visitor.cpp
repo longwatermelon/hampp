@@ -81,7 +81,7 @@ std::shared_ptr<AST> Visitor::builtin_function_strcmp(std::vector<std::shared_pt
 		}
 		if (args[i - 1]->type == AstType::AST_STRING)
 		{
-			var2value = args[i]->string_value;
+			var2value = args[i - 1]->string_value;
 		}
 		else
 		{
@@ -311,7 +311,16 @@ std::shared_ptr<AST> Visitor::add_func_def(std::shared_ptr<AST> node)
 
 std::shared_ptr<AST> Visitor::visit_conditional(std::shared_ptr<AST> node)
 {
-	auto ast_boolean = visit_var(node->conditional_condition->conditional_condition);
+	std::shared_ptr<AST> ast_boolean;
+	if (node->conditional_condition->conditional_condition->type == AstType::AST_FUNCTION_CALL)
+	{
+		ast_boolean = visit_func_call(node->conditional_condition->conditional_condition);
+	}
+	else if (node->conditional_condition->conditional_condition->type == AstType::AST_VARIABLE)
+	{
+		ast_boolean = visit_var(node->conditional_condition->conditional_condition);
+	}
+	
 	
 	bool boolean = ast_boolean->bool_value;
 	if (boolean)
