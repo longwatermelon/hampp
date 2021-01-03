@@ -28,5 +28,7 @@ private:
 	std::shared_ptr<AST> parse_statement();
 	std::shared_ptr<AST> parse_statements();
 
+	std::shared_ptr<AST> parse_conditional();
+
 	void init_error_values(std::shared_ptr<AST> node);
 };

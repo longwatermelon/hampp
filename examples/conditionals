@@ -1,0 +1,9 @@
+if (true)
+{
+    prount("inside of true");
+};
+
+if (false)
+{
+    prount("inside of false");
+};

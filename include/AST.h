@@ -12,6 +12,7 @@ enum class AstType
 	AST_STRING,
 	AST_BOOL,
 	AST_COMPOUND,
+	AST_CONDITIONAL,
 	AST_NOOP
 };
 
@@ -75,6 +76,10 @@ struct AST
 
 	// ast compound
 	std::vector<std::shared_ptr<AST>> compound_value;
+
+	// ast conditional
+	std::shared_ptr<AST> conditional_body;
+	std::shared_ptr<AST> conditional_condition;
 
 	// error properties
 	std::string error_line_contents;

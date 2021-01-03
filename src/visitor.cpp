@@ -71,6 +71,7 @@ std::shared_ptr<AST> Visitor::visit(std::shared_ptr<AST> node)
 	case AstType::AST_STRING: return visit_str(node);
 	case AstType::AST_BOOL: return visit_bool(node);
 	case AstType::AST_COMPOUND: return visit_compound(node);
+	case AstType::AST_CONDITIONAL: return visit_conditional(node);
 	case AstType::AST_NOOP: return node;
 	}
 	
@@ -244,4 +245,20 @@ std::shared_ptr<AST> Visitor::add_func_def(std::shared_ptr<AST> node)
 	function_defs.emplace_back(node);
 
 	return node;
+}
+
+std::shared_ptr<AST> Visitor::visit_conditional(std::shared_ptr<AST> node)
+{
+	auto ast_boolean = visit_var(node->conditional_condition->conditional_condition);
+	
+	bool boolean = ast_boolean->bool_value;
+	if (boolean)
+	{
+		return visit(node->conditional_body);
+	}
+	else
+	{
+		node->conditional_body = std::make_shared<AST>(AstType::AST_NOOP);
+		return visit(node->conditional_body);
+	}
 }

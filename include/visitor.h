@@ -33,4 +33,6 @@ struct Visitor
 	std::shared_ptr<AST> get_func_def(const std::string name);
 
 	std::shared_ptr<AST> add_func_def(std::shared_ptr<AST> node);
+
+	std::shared_ptr<AST> visit_conditional(std::shared_ptr<AST> node);
 };

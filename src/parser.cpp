@@ -59,6 +59,10 @@ std::shared_ptr<AST> Parser::parse_id()
 	{
 		return parse_function_definition();
 	}
+	else if (currentToken.m_value == "if")
+	{
+		return parse_conditional();
+	}
 	else
 	{
 		return parse_variable();
@@ -200,6 +204,36 @@ std::shared_ptr<AST> Parser::parse_statements()
 		}
 	}
 
+	return ast;
+}
+
+std::shared_ptr<AST> Parser::parse_conditional()
+{
+	const auto ast = std::make_shared<AST>(AstType::AST_CONDITIONAL);
+	eat(TokenType::TOKEN_ID);
+	eat(TokenType::TOKEN_LPAREN);
+
+	const auto boolval = std::make_shared<AST>(AstType::AST_BOOL);
+	boolval->conditional_condition = parse_expr();
+	ast->conditional_condition = boolval;
+
+	eat(TokenType::TOKEN_RPAREN);
+
+	eat(TokenType::TOKEN_LBRACE);
+
+	/*if (ast->conditional_condition->bool_value)
+	{
+		ast->conditional_body = parse_statements();
+	}
+	else
+	{
+		parse_statements();
+		ast->conditional_body = std::make_shared<AST>(AstType::AST_NOOP);
+	}*/
+	ast->conditional_body = parse_statements();
+
+	eat(TokenType::TOKEN_RBRACE);
+	
 	return ast;
 }
 
