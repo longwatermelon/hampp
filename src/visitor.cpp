@@ -44,7 +44,7 @@ std::shared_ptr<AST> Visitor::builtin_function_destroy(std::vector<std::shared_p
 {
 	for (auto& arg : args)
 	{
-		std::shared_ptr<AST> ast = get_var_from_value(arg->string_value);
+		std::shared_ptr<AST> ast = get_var_from_name(arg->variable_name);
 		std::vector<std::shared_ptr<AST>>::iterator iter = std::find(variable_defs.begin(), variable_defs.end(), ast);
 		if (iter != variable_defs.end())
 		{
@@ -123,6 +123,19 @@ std::shared_ptr<AST> Visitor::get_var_from_value(std::string value)
 		}
 	}
 
+
+	return nullptr;
+}
+
+std::shared_ptr<AST> Visitor::get_var_from_name(std::string name)
+{
+	for (auto& def : variable_defs)
+	{
+		if (def->variable_definition_name == name || def->variable_name == name)
+		{
+			return def;
+		}
+	}
 
 	return nullptr;
 }

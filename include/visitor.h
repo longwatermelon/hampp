@@ -22,6 +22,8 @@ struct Visitor
 
 	std::shared_ptr<AST> get_var_from_value(std::string value);
 
+	std::shared_ptr<AST> get_var_from_name(std::string name);
+
 	std::shared_ptr<AST> visit_str(std::shared_ptr<AST> node);
 
 	std::shared_ptr<AST> visit_bool(std::shared_ptr<AST> node);
