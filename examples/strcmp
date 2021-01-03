@@ -1,0 +1,6 @@
+def variable = "test";
+def condition = strcmp(variable, "test");
+if (condition)
+{
+    prount("variable and test are equal");
+};

@@ -60,6 +60,50 @@ std::shared_ptr<AST> Visitor::builtin_function_destroy(std::vector<std::shared_p
 	return std::make_shared<AST>(AstType::AST_NOOP);
 }
 
+std::shared_ptr<AST> Visitor::builtin_function_strcmp(std::vector<std::shared_ptr<AST>> args)
+{
+	auto ast_bool = std::make_shared<AST>(AstType::AST_BOOL);
+
+	for (unsigned i = 0; i < args.size(); ++i)
+	{
+		if (i == 0) { continue; }
+
+		std::string var1value, var2value;
+		if (args[i]->type == AstType::AST_STRING)
+		{
+			var1value = args[i]->string_value;
+		}
+		else
+		{
+			std::shared_ptr<AST> var1 = get_var_from_name(args[i]->variable_name);
+
+			var1value = var1->variable_definition_value->string_value;
+		}
+		if (args[i - 1]->type == AstType::AST_STRING)
+		{
+			var2value = args[i]->string_value;
+		}
+		else
+		{
+			std::shared_ptr<AST> var2 = get_var_from_name(args[i - 1]->variable_name);
+
+			var2value = var2->variable_definition_value->string_value;
+		}
+
+		if (var1value == var2value)
+		{
+			ast_bool->bool_value = true;
+		}
+		else
+		{
+			ast_bool->bool_value = false;
+			return ast_bool;
+		}
+	}
+
+	return ast_bool;
+}
+
 std::shared_ptr<AST> Visitor::visit(std::shared_ptr<AST> node)
 {
 	switch (node->type)
@@ -170,6 +214,11 @@ std::shared_ptr<AST> Visitor::visit_func_call(std::shared_ptr<AST> node)
 	if (node->function_call_name == "destroy")
 	{
 		return builtin_function_destroy(node->function_call_args);
+	}
+
+	if (node->function_call_name == "strcmp")
+	{
+		return builtin_function_strcmp(node->function_call_args);
 	}
 
 	std::shared_ptr<AST> func_def = get_func_def(node->function_call_name);
