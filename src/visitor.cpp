@@ -34,7 +34,7 @@ std::shared_ptr<AST> Visitor::builtin_function_destroy(std::vector<std::shared_p
 		std::vector<std::shared_ptr<AST>>::iterator iter = std::find(variable_defs.begin(), variable_defs.end(), ast);
 		if (iter != variable_defs.end())
 		{
-			int index = std::distance(variable_defs.begin(), iter);
+			__int64 index = std::distance(variable_defs.begin(), iter);
 			variable_defs.erase(variable_defs.begin() + index);
 		}
 		else
