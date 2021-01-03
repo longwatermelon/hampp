@@ -3,4 +3,4 @@ func funcWithArgs(x, y)
     prount(x, y);
 };
 
-funcWithArgs("x value", "y value", "this shouldnt be here");
+funcWithArgs("x value", "y value");
