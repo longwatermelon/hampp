@@ -112,6 +112,17 @@ std::shared_ptr<AST> Visitor::builtin_function_strcmp(std::vector<std::shared_pt
 				}
 			}
 		}
+		else if (args[i]->type == AstType::AST_FUNCTION_CALL)
+		{
+			std::shared_ptr<AST> var1 = visit_func_call(args[i]);
+
+			switch (var1->type)
+			{
+			case AstType::AST_BOOL: var1value = var1->bool_value; type1 = AstType::AST_BOOL; break;
+			case AstType::AST_INT: var1value = var1->int_value; type1 = AstType::AST_INT; break;
+			case AstType::AST_STRING: var1value = var1->string_value; type1 = AstType::AST_STRING; break;
+			}
+		}
 
 
 		if (args[i - 1]->type == AstType::AST_STRING)
@@ -159,6 +170,20 @@ std::shared_ptr<AST> Visitor::builtin_function_strcmp(std::vector<std::shared_pt
 
 			check_compatible_types(type2, type1, args[i - 1]);
 		}
+		else if (args[i - 1]->type == AstType::AST_FUNCTION_CALL)
+		{
+			std::shared_ptr<AST> var2 = visit_func_call(args[i - 1]);
+
+			switch (var2->type)
+			{
+			case AstType::AST_BOOL: var2value = var2->bool_value; type2 = AstType::AST_BOOL; break;
+			case AstType::AST_INT: var2value = var2->int_value; type2 = AstType::AST_INT; break;
+			case AstType::AST_STRING: var2value = var2->string_value; type2 = AstType::AST_STRING; break;
+			}
+
+			check_compatible_types(type2, type1, args[i - 1]);
+		}
+
 
 		if (var1value == var2value)
 		{
