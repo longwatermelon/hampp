@@ -498,7 +498,7 @@ std::shared_ptr<AST> Visitor::visit_func_call(std::shared_ptr<AST> node)
 		return builtin_function_subtract(node->function_call_args, node);
 	}
 
-	if (node->function_call_name == "randomRandint")
+	if (node->function_call_name == "random_randint")
 	{
 		return builtin_function_random_randint(node->function_call_args, node, *this);
 	}

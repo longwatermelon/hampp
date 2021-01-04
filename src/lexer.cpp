@@ -70,7 +70,7 @@ std::string Lexer::collect_single_char_string()
 std::string Lexer::collect_id()
 {
 	const auto currentIndex = index;
-	while (isalnum(currentCharacter) && index < contents.size())
+	while ((isalnum(currentCharacter) || currentCharacter == '_') && index < contents.size())
 	{
 		advance();
 	}
