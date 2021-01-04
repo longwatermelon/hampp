@@ -1,6 +1,7 @@
 #pragma once
 #include "AST.h"
 #include "utils.h"
+#include "../modules/random.h"
 #include <memory>
 #include <vector>
 #include <string>
@@ -14,7 +15,7 @@ struct Visitor
 	std::shared_ptr<AST> builtin_function_strcmp(std::vector<std::shared_ptr<AST>> args);
 	std::shared_ptr<AST> builtin_function_add(std::vector<std::shared_ptr<AST>> args, std::shared_ptr<AST> node);
 	std::shared_ptr<AST> builtin_function_subtract(std::vector<std::shared_ptr<AST>> args, std::shared_ptr<AST> node);
-	std::shared_ptr<AST> builtin_function_random_randint(std::vector<std::shared_ptr<AST>> args, std::shared_ptr<AST> node);
+	//std::shared_ptr<AST> builtin_function_random_randint(std::vector<std::shared_ptr<AST>> args, std::shared_ptr<AST> node);
 
 	std::vector<std::shared_ptr<AST>> variable_defs;
 	std::vector<std::shared_ptr<AST>> function_defs;
