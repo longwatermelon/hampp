@@ -1,7 +1,7 @@
 def min = 5;
 def max = 100;
-def random1 = randomRandint(min, max);
+def random1 = random_randint(min, max);
 
 prount(random1);
 
-prount(randomRandint(0, 1000));
+prount(random_randint(0, 1000));
