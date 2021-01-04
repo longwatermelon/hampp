@@ -118,19 +118,19 @@ std::shared_ptr<AST> Visitor::builtin_function_strcmp(std::vector<std::shared_pt
 		{
 			var2value = args[i - 1]->string_value;
 			type2 = AstType::AST_STRING;
-			check_compatible_types(type1, args[i - 1]->type);
+			check_compatible_types(type1, args[i - 1]->type, args[i - 1]);
 		}
 		else if (args[i - 1]->type == AstType::AST_INT)
 		{
 			var2value = args[i - 1]->int_value;
 			type2 = AstType::AST_INT;
-			check_compatible_types(type1, args[i - 1]->type);
+			check_compatible_types(type1, args[i - 1]->type, args[i - 1]);
 		}
 		else if (args[i - 1]->type == AstType::AST_BOOL)
 		{
 			var2value = args[i - 1]->bool_value;
 			type2 = AstType::AST_BOOL;
-			check_compatible_types(type1, args[i - 1]->type);
+			check_compatible_types(type1, args[i - 1]->type, args[i - 1]);
 		}
 		else if (args[i - 1]->type == AstType::AST_VARIABLE)
 		{
@@ -157,7 +157,7 @@ std::shared_ptr<AST> Visitor::builtin_function_strcmp(std::vector<std::shared_pt
 				}
 			}
 
-			check_compatible_types(type2, type1);
+			check_compatible_types(type2, type1, args[i - 1]);
 		}
 
 		if (var1value == var2value)
@@ -410,12 +410,12 @@ std::shared_ptr<AST> Visitor::visit_conditional(std::shared_ptr<AST> node)
 	}
 }
 
-void Visitor::check_compatible_types(AstType type1, AstType type2)
+void Visitor::check_compatible_types(AstType type1, AstType type2, std::shared_ptr<AST> arg)
 {
 	if (type1 != type2)
 	{
 		std::stringstream err;
-		err << "Incompatible types: Cannot compare " << ast_to_str(type1) << " with " << ast_to_str(type2);
+		err << "Line " << arg->error_line_num << ":\n" << arg->error_line_contents << "\nIncompatible types: Cannot compare " << ast_to_str(type1) << " with " << ast_to_str(type2);
 		throw std::runtime_error(err.str());
 	}
 }
