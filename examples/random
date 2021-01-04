@@ -1,0 +1,5 @@
+def min = 5;
+def max = 100;
+def random1 = randomRandint(min, max);
+
+prount(random1);

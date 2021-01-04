@@ -1,17 +1,3 @@
-def index = 0;
-def cap = 5;
-func recursiveLoop()
-{
-    prount(index);
-    add(index, 1);
-
-    if (cmp(cmp(index, cap), false))
-    {
-        recursiveLoop();
-    };
-};
-
-recursiveLoop();
-destroy(index, cap);
-
-prount("end of file");
+def num = 0;
+def var = randomRandint(num, 5);
+prount(var);

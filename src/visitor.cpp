@@ -3,6 +3,8 @@
 #include <string>
 #include <sstream>
 #include <algorithm>
+#include <ctime>
+#include <cstdlib>
 
 Visitor::Visitor()
 {
@@ -288,6 +290,81 @@ std::shared_ptr<AST> Visitor::builtin_function_subtract(std::vector<std::shared_
 	return std::make_shared<AST>(AstType::AST_NOOP);
 }
 
+std::shared_ptr<AST> Visitor::builtin_function_random_randint(std::vector<std::shared_ptr<AST>> args, std::shared_ptr<AST> node)
+{
+	if (args.size() != 2)
+	{
+		std::stringstream err;
+		err << "Line " << node->error_line_num << ":\n" << node->error_line_contents << "\n"
+			<< "random_randint takes 2 arguments (min, max) but " << args.size() << " arguments were supplied.\n";
+		throw std::runtime_error(err.str());
+	}
+
+	int min, max;
+	AstType type = AstType::AST_VARIABLE;
+	std::shared_ptr<AST> var1, var2;
+	if (args[0]->type == AstType::AST_VARIABLE) 
+	{
+		var1 = goto_root_of_var(args[0]->variable_name);
+		min = var1->int_value;
+		eat_type(var1->type, AstType::AST_INT, node);
+	}
+	else 
+	{
+		min = args[0]->int_value;
+		eat_type(args[0]->type, AstType::AST_INT, node);
+	}
+
+	if (args[1]->type == AstType::AST_VARIABLE) 
+	{ 
+		var2 = goto_root_of_var(args[1]->variable_name);
+		max = var2->int_value; 
+		eat_type(var2->type, AstType::AST_INT, node);
+	}
+	else 
+	{
+		max = args[1]->int_value; 
+		eat_type(args[1]->type, AstType::AST_INT, node);
+	}
+
+	std::shared_ptr<AST> result = std::make_shared<AST>(AstType::AST_INT);
+
+	std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+	result->int_value = std::rand() % max + min;
+	
+	return result;
+}
+
+std::shared_ptr<AST> Visitor::goto_root_of_var(std::string name)
+{
+	auto var = get_var_from_name(name);
+	AstType type = var->variable_definition_value->type;
+	while (type == AstType::AST_VARIABLE)
+	{
+		type = AstType::AST_NOOP;
+		switch (type)
+		{
+		case AstType::AST_VARIABLE: var = goto_root_of_var(var->variable_definition_value->variable_name); type = AstType::AST_VARIABLE; break;
+		default: type = AstType::AST_NOOP; break;
+		}
+	}
+
+	
+	return var->variable_definition_value;
+}
+
+void Visitor::eat_type(AstType type, AstType expected_type, std::shared_ptr<AST> node)
+{
+	if (type != expected_type)
+	{
+		std::stringstream err;
+		err << "Line " << node->error_line_num << ":\n" << node->error_line_contents
+			<< "\nExpected type " << ast_to_str(expected_type) << " but got " << ast_to_str(type) << "\n";
+		throw std::runtime_error(err.str());
+	}
+}
+
 std::shared_ptr<AST> Visitor::visit(std::shared_ptr<AST> node)
 {
 	switch (node->type)
@@ -419,6 +496,11 @@ std::shared_ptr<AST> Visitor::visit_func_call(std::shared_ptr<AST> node)
 	if (node->function_call_name == "subtract")
 	{
 		return builtin_function_subtract(node->function_call_args, node);
+	}
+
+	if (node->function_call_name == "randomRandint")
+	{
+		return builtin_function_random_randint(node->function_call_args, node);
 	}
 
 	std::shared_ptr<AST> func_def = get_func_def(node->function_call_name);

@@ -13,9 +13,13 @@ struct Visitor
 	std::shared_ptr<AST> builtin_function_strcmp(std::vector<std::shared_ptr<AST>> args);
 	std::shared_ptr<AST> builtin_function_add(std::vector<std::shared_ptr<AST>> args, std::shared_ptr<AST> node);
 	std::shared_ptr<AST> builtin_function_subtract(std::vector<std::shared_ptr<AST>> args, std::shared_ptr<AST> node);
+	std::shared_ptr<AST> builtin_function_random_randint(std::vector<std::shared_ptr<AST>> args, std::shared_ptr<AST> node);
 
 	std::vector<std::shared_ptr<AST>> variable_defs;
 	std::vector<std::shared_ptr<AST>> function_defs;
+
+	std::shared_ptr<AST> goto_root_of_var(std::string name);
+	void eat_type(AstType type, AstType expected_type, std::shared_ptr<AST> node);
 
 	std::shared_ptr<AST> visit(std::shared_ptr<AST> node);
 
