@@ -46,6 +46,16 @@ enum class AstType
 // 		break;
 // 	}
 // }
+static std::string ast_to_str(AstType type)
+{
+	switch (type)
+	{
+	case AstType::AST_BOOL: return "boolean"; break;
+	case AstType::AST_INT: return "int"; break;
+	case AstType::AST_STRING: return "string"; break;
+	default: return "Unknown"; break;
+	}
+}
 
 struct AST
 {

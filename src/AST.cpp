@@ -4,3 +4,4 @@ AST::AST(AstType type)
 	: type(type)
 {
 }
+

@@ -70,26 +70,68 @@ std::shared_ptr<AST> Visitor::builtin_function_strcmp(std::vector<std::shared_pt
 		if (i == 0) { continue; }
 
 		std::string var1value, var2value;
+		AstType type1;
+
 		if (args[i]->type == AstType::AST_STRING)
 		{
 			var1value = args[i]->string_value;
+			type1 = args[i]->type;
+		}
+		else if (args[i]->type == AstType::AST_INT)
+		{
+			var1value = args[i]->int_value;
+			type1 = args[i]->type;
+		}
+		else if (args[i]->type == AstType::AST_BOOL)
+		{
+			var1value = args[i]->bool_value;
+			type1 = args[i]->type;
 		}
 		else if (args[i]->type == AstType::AST_VARIABLE)
 		{
 			std::shared_ptr<AST> var1 = get_var_from_name(args[i]->variable_name);
 
-			var1value = var1->variable_definition_value->string_value;
+			switch (var1->variable_definition_value->type)
+			{
+			case AstType::AST_STRING: var1value = var1->variable_definition_value->string_value; break;
+			case AstType::AST_INT: var1value = var1->variable_definition_value->int_value; break;
+			case AstType::AST_BOOL: var1value = var1->variable_definition_value->bool_value; break;
+			}
+
+			type1 = var1->variable_definition_value->type;
 		}
+
 
 		if (args[i - 1]->type == AstType::AST_STRING)
 		{
 			var2value = args[i - 1]->string_value;
+
+			check_compatible_types(args[i]->type, args[i - 1]->type);
+		}
+		else if (args[i - 1]->type == AstType::AST_INT)
+		{
+			var2value = args[i - 1]->int_value;
+			
+			check_compatible_types(args[i]->type, args[i - 1]->type);
+		}
+		else if (args[i - 1]->type == AstType::AST_BOOL)
+		{
+			var2value = args[i - 1]->bool_value;
+
+			check_compatible_types(args[i]->type, args[i - 1]->type);
 		}
 		else if (args[i - 1]->type == AstType::AST_VARIABLE)
 		{
 			std::shared_ptr<AST> var2 = get_var_from_name(args[i - 1]->variable_name);
+			
+			switch (var2->variable_definition_value->type)
+			{
+			case AstType::AST_STRING: var2value = var2->variable_definition_value->string_value; break;
+			case AstType::AST_INT: var2value = var2->variable_definition_value->int_value; break;
+			case AstType::AST_BOOL: var2value = var2->variable_definition_value->bool_value; break;
+			}
 
-			var2value = var2->variable_definition_value->string_value;
+			check_compatible_types(var2->variable_definition_value->type, type1);
 		}
 
 		if (var1value == var2value)
@@ -224,7 +266,7 @@ std::shared_ptr<AST> Visitor::visit_func_call(std::shared_ptr<AST> node)
 		return builtin_function_destroy(node->function_call_args);
 	}
 
-	if (node->function_call_name == "strcmp")
+	if (node->function_call_name == "cmp")
 	{
 		return builtin_function_strcmp(node->function_call_args);
 	}
@@ -339,5 +381,15 @@ std::shared_ptr<AST> Visitor::visit_conditional(std::shared_ptr<AST> node)
 	{
 		node->conditional_body = std::make_shared<AST>(AstType::AST_NOOP);
 		return visit(node->conditional_body);
+	}
+}
+
+void Visitor::check_compatible_types(AstType type1, AstType type2)
+{
+	if (type1 != type2)
+	{
+		std::stringstream err;
+		err << "Incompatible types: Cannot compare " << ast_to_str(type1) << " with " << ast_to_str(type2);
+		throw std::runtime_error(err.str());
 	}
 }
