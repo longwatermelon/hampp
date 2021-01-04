@@ -38,12 +38,21 @@ std::shared_ptr<AST> Parser::parse_string()
 	return astString;
 }
 
+std::shared_ptr<AST> Parser::parse_int()
+{
+	const auto ast = std::make_shared<AST>(AstType::AST_INT);
+	std::istringstream(currentToken.m_value) >> ast->int_value;
+	eat(TokenType::TOKEN_INT);
+	return ast;
+}
+
 std::shared_ptr<AST> Parser::parse_expr()
 {
 	switch (currentToken.m_type)
 	{
 		case TokenType::TOKEN_STRING: return parse_string();
 		case TokenType::TOKEN_ID: return parse_id();
+		case TokenType::TOKEN_INT: return parse_int();
 	}
 
 	return std::make_shared<AST>(AstType::AST_NOOP);
@@ -162,7 +171,7 @@ std::shared_ptr<AST> Parser::parse_variable()
 		return parse_function_call();
 	}
 
-	ast->variable_name = tokenValue;	
+	ast->variable_name = tokenValue;
 
 	return ast;
 }
@@ -173,6 +182,7 @@ std::shared_ptr<AST> Parser::parse_statement()
 	{
 		case TokenType::TOKEN_ID: return parse_id();
 		case TokenType::TOKEN_STRING: return parse_string();
+		case TokenType::TOKEN_INT: return parse_int();
 		default: break;
 	}
 

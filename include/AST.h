@@ -11,6 +11,7 @@ enum class AstType
 	AST_FUNCTION_CALL,
 	AST_STRING,
 	AST_BOOL,
+	AST_INT,
 	AST_COMPOUND,
 	AST_CONDITIONAL,
 	AST_NOOP
@@ -72,7 +73,10 @@ struct AST
 	std::string string_value;
 
 	// ast bool
-	bool bool_value = NULL;
+	bool bool_value{ NULL };
+
+	// ast int
+	int int_value{ 0 };
 
 	// ast compound
 	std::vector<std::shared_ptr<AST>> compound_value;

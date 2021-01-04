@@ -1,6 +1,7 @@
 #include "../include/lexer.h"
 #include <stdexcept>
 #include <ctype.h>
+#include <sstream>
 
 Lexer::Lexer() = default;
 
@@ -43,6 +44,18 @@ std::string Lexer::collect_string()
 	return retVal;
 }
 
+std::string Lexer::collect_int()
+{
+	std::string integer;
+	while (isdigit(currentCharacter))
+	{
+		integer += currentCharacter;
+		advance();
+	}
+
+	return integer;
+}
+
 std::string Lexer::collect_single_char_string()
 {
 	const auto retVal = std::string(1, currentCharacter);
@@ -70,6 +83,12 @@ Token Lexer::get_next_token()
 		{
 			skip_whitespace();
 		}
+
+		if (isdigit(currentCharacter))
+		{
+			return Token(TokenType::TOKEN_INT, collect_int());
+		}
+
 		switch (currentCharacter)
 		{
 		case ';': return Token(TokenType::TOKEN_SEMI, collect_single_char_string());

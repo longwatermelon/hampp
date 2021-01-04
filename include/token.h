@@ -8,7 +8,8 @@ enum class TokenType
     TOKEN_LPAREN, // 2
     TOKEN_RPAREN, // 3
     TOKEN_EQUALS, // 4
-    TOKEN_STRING, // 5
+    TOKEN_STRING,
+    TOKEN_INT,
     TOKEN_COMMA, // 6
     TOKEN_LBRACE, // 7
     TOKEN_RBRACE, // 8

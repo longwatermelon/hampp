@@ -20,6 +20,8 @@ struct Lexer
 
     std::string collect_string();
 
+    std::string collect_int();
+
     std::string collect_single_char_string();
 
     std::string collect_id();

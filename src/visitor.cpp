@@ -31,6 +31,7 @@ std::shared_ptr<AST> Visitor::builtin_function_print(std::vector<std::shared_ptr
 		{
 		case AstType::AST_STRING: std::cout << ast->string_value << " "; break;
 		case AstType::AST_BOOL: std::cout << ast->bool_value << " "; break;
+		case AstType::AST_INT: std::cout << ast->int_value << " "; break;
 		default: std::cout << ast; break;
 		}
 	}
@@ -73,17 +74,18 @@ std::shared_ptr<AST> Visitor::builtin_function_strcmp(std::vector<std::shared_pt
 		{
 			var1value = args[i]->string_value;
 		}
-		else
+		else if (args[i]->type == AstType::AST_VARIABLE)
 		{
 			std::shared_ptr<AST> var1 = get_var_from_name(args[i]->variable_name);
 
 			var1value = var1->variable_definition_value->string_value;
 		}
+
 		if (args[i - 1]->type == AstType::AST_STRING)
 		{
 			var2value = args[i - 1]->string_value;
 		}
-		else
+		else if (args[i - 1]->type == AstType::AST_VARIABLE)
 		{
 			std::shared_ptr<AST> var2 = get_var_from_name(args[i - 1]->variable_name);
 
@@ -113,6 +115,7 @@ std::shared_ptr<AST> Visitor::visit(std::shared_ptr<AST> node)
 	case AstType::AST_FUNCTION_CALL: return visit_func_call(node);
 	case AstType::AST_FUNCTION_DEFINITION: return add_func_def(node);
 	case AstType::AST_STRING: return visit_str(node);
+	case AstType::AST_INT: return visit_int(node);
 	case AstType::AST_BOOL: return visit_bool(node);
 	case AstType::AST_COMPOUND: return visit_compound(node);
 	case AstType::AST_CONDITIONAL: return visit_conditional(node);
@@ -190,6 +193,11 @@ std::shared_ptr<AST> Visitor::visit_str(std::shared_ptr<AST> node)
 }
 
 std::shared_ptr<AST> Visitor::visit_bool(std::shared_ptr<AST> node)
+{
+	return node;
+}
+
+std::shared_ptr<AST> Visitor::visit_int(std::shared_ptr<AST> node)
 {
 	return node;
 }
