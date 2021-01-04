@@ -25,9 +25,9 @@ std::shared_ptr<AST> Visitor::builtin_function_print(std::vector<std::shared_ptr
 {
 	for (auto& arg : args)
 	{
-		std::shared_ptr<AST> ast = visit(arg);
+		std::shared_ptr<AST> ast = get_var_from_name(arg->variable_definition_name);
 
-		switch (ast->type)
+		switch (ast->variable_definition_value->type)
 		{
 		case AstType::AST_STRING: std::cout << ast->string_value << " "; break;
 		case AstType::AST_BOOL: std::cout << ast->bool_value << " "; break;
@@ -163,7 +163,7 @@ std::shared_ptr<AST> Visitor::builtin_function_strcmp(std::vector<std::shared_pt
 					case AstType::AST_BOOL: var2value = ast_var->variable_definition_value->bool_value; type2 = AstType::AST_BOOL;  break;
 					case AstType::AST_INT: var2value = ast_var->variable_definition_value->int_value; type2 = AstType::AST_INT; break;
 					case AstType::AST_STRING: var2value = ast_var->variable_definition_value->string_value; type2 = AstType::AST_INT;  break;
-					case AstType::AST_VARIABLE: ast_var = get_var_from_name(ast_var->variable_definition_value->variable_definition_name); type = AstType::AST_VARIABLE; break;
+					case AstType::AST_VARIABLE: ast_var = get_var_from_name(ast_var->variable_definition_value->variable_name); type = AstType::AST_VARIABLE; break;
 					}
 				}
 			}
