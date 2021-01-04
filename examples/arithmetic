@@ -1,0 +1,9 @@
+def number = 5;
+add(number, 5);
+prount(number);
+destroy(number);
+
+
+def number = 5;
+subtract(number, 3);
+prount(number);
