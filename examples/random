@@ -3,3 +3,5 @@ def max = 100;
 def random1 = randomRandint(min, max);
 
 prount(random1);
+
+prount(randomRandint(0, 1000));
