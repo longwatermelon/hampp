@@ -40,7 +40,7 @@ std::shared_ptr<AST> Visitor::builtin_function_print(std::vector<std::shared_ptr
 			case AstType::AST_INT: std::cout << ast->int_value << " "; break;
 			case AstType::AST_VARIABLE: {
 				auto type = AstType::AST_VARIABLE;
-				auto ast_var = get_var_from_name(ast->variable_name);
+				auto ast_var = get_var_from_name(*this, ast->variable_name);
 				while (type == AstType::AST_VARIABLE)
 				{
 					type = AstType::AST_NOOP;
@@ -49,7 +49,7 @@ std::shared_ptr<AST> Visitor::builtin_function_print(std::vector<std::shared_ptr
 					case AstType::AST_BOOL: std::cout << ast_var->bool_value << " "; break;
 					case AstType::AST_INT: std::cout << ast_var->int_value << " "; break;
 					case AstType::AST_STRING: std::cout << ast_var->string_value << " "; break;
-					case AstType::AST_VARIABLE: ast_var = get_var_from_name(ast_var->variable_definition_name); type = AstType::AST_VARIABLE; break;
+					case AstType::AST_VARIABLE: ast_var = get_var_from_name(*this, ast_var->variable_definition_name); type = AstType::AST_VARIABLE; break;
 					}
 				}
 			} break;
@@ -68,7 +68,7 @@ std::shared_ptr<AST> Visitor::builtin_function_destroy(std::vector<std::shared_p
 {
 	for (auto& arg : args)
 	{
-		std::shared_ptr<AST> ast = get_var_from_name(arg->variable_name);
+		std::shared_ptr<AST> ast = get_var_from_name(*this, arg->variable_name);
 		std::vector<std::shared_ptr<AST>>::iterator iter = std::find(variable_defs.begin(), variable_defs.end(), ast);
 		if (iter != variable_defs.end())
 		{
@@ -115,11 +115,11 @@ std::shared_ptr<AST> Visitor::builtin_function_strcmp(std::vector<std::shared_pt
 			std::shared_ptr<AST> var1;
 			if (args[i]->variable_name == "")
 			{
-				var1 = get_var_from_name(args[i]->variable_definition_name);
+				var1 = get_var_from_name(*this, args[i]->variable_definition_name);
 			}
 			else
 			{
-				var1 = get_var_from_name(args[i]->variable_name);
+				var1 = get_var_from_name(*this, args[i]->variable_name);
 			}
 			
 
@@ -136,7 +136,7 @@ std::shared_ptr<AST> Visitor::builtin_function_strcmp(std::vector<std::shared_pt
 					name = var1->variable_definition_value->variable_name;
 				}
 			
-				auto ast_var = get_var_from_name(name);
+				auto ast_var = get_var_from_name(*this, name);
 				while (type == AstType::AST_VARIABLE)
 				{
 					type = AstType::AST_NOOP;
@@ -149,7 +149,7 @@ std::shared_ptr<AST> Visitor::builtin_function_strcmp(std::vector<std::shared_pt
 						std::string name;
 						if (ast_var->variable_definition_value->variable_name == "") { name = ast_var->variable_definition_value->variable_definition_name; }
 						else { name = ast_var->variable_definition_value->variable_name; }
-						ast_var = get_var_from_name(name); type = AstType::AST_VARIABLE; break; 
+						ast_var = get_var_from_name(*this, name); type = AstType::AST_VARIABLE; break; 
 					}
 					}
 				}
@@ -198,7 +198,7 @@ std::shared_ptr<AST> Visitor::builtin_function_strcmp(std::vector<std::shared_pt
 			{
 				name = args[i - 1]->variable_name;
 			}
-			var2 = get_var_from_name(args[i - 1]->variable_name);
+			var2 = get_var_from_name(*this, args[i - 1]->variable_name);
 			
 			
 			switch (var2->variable_definition_value->type)
@@ -208,7 +208,7 @@ std::shared_ptr<AST> Visitor::builtin_function_strcmp(std::vector<std::shared_pt
 			case AstType::AST_BOOL: var2value = var2->variable_definition_value->bool_value; type2 = AstType::AST_BOOL; break;
 			case AstType::AST_VARIABLE: 
 				auto type = AstType::AST_VARIABLE;
-				auto ast_var = get_var_from_name(var2->variable_definition_value->variable_name);
+				auto ast_var = get_var_from_name(*this, var2->variable_definition_value->variable_name);
 				while (type == AstType::AST_VARIABLE)
 				{
 					type = AstType::AST_NOOP;
@@ -221,7 +221,7 @@ std::shared_ptr<AST> Visitor::builtin_function_strcmp(std::vector<std::shared_pt
 						std::string name;
 						if (ast_var->variable_definition_value->variable_name == "") { name = ast_var->variable_definition_value->variable_definition_name; }
 						else { name = ast_var->variable_name; }
-						ast_var = get_var_from_name(name);
+						ast_var = get_var_from_name(*this, name);
 						type = AstType::AST_VARIABLE;
 						break; 
 					}
@@ -270,7 +270,7 @@ std::shared_ptr<AST> Visitor::builtin_function_add(std::vector<std::shared_ptr<A
 		throw std::runtime_error(err.str());
 	}
 
-	const auto variable = get_var_from_name(args[0]->variable_name);
+	const auto variable = get_var_from_name(*this, args[0]->variable_name);
 	variable->variable_definition_value->int_value += args[1]->int_value;
 	return std::make_shared<AST>(AstType::AST_NOOP);
 }
@@ -285,7 +285,7 @@ std::shared_ptr<AST> Visitor::builtin_function_subtract(std::vector<std::shared_
 		throw std::runtime_error(err.str());
 	}
 
-	const auto variable = get_var_from_name(args[0]->variable_name);
+	const auto variable = get_var_from_name(*this, args[0]->variable_name);
 	variable->variable_definition_value->int_value -= args[1]->int_value;
 	return std::make_shared<AST>(AstType::AST_NOOP);
 }
@@ -305,7 +305,7 @@ std::shared_ptr<AST> Visitor::builtin_function_random_randint(std::vector<std::s
 	std::shared_ptr<AST> var1, var2;
 	if (args[0]->type == AstType::AST_VARIABLE) 
 	{
-		var1 = goto_root_of_var(args[0]->variable_name);
+		var1 = goto_root_of_var(*this, args[0]->variable_name);
 		min = var1->int_value;
 		eat_type(var1->type, AstType::AST_INT, node);
 	}
@@ -317,7 +317,7 @@ std::shared_ptr<AST> Visitor::builtin_function_random_randint(std::vector<std::s
 
 	if (args[1]->type == AstType::AST_VARIABLE) 
 	{ 
-		var2 = goto_root_of_var(args[1]->variable_name);
+		var2 = goto_root_of_var(*this, args[1]->variable_name);
 		max = var2->int_value; 
 		eat_type(var2->type, AstType::AST_INT, node);
 	}
@@ -336,34 +336,34 @@ std::shared_ptr<AST> Visitor::builtin_function_random_randint(std::vector<std::s
 	return result;
 }
 
-std::shared_ptr<AST> Visitor::goto_root_of_var(std::string name)
-{
-	auto var = get_var_from_name(name);
-	AstType type = var->variable_definition_value->type;
-	while (type == AstType::AST_VARIABLE)
-	{
-		type = AstType::AST_NOOP;
-		switch (type)
-		{
-		case AstType::AST_VARIABLE: var = goto_root_of_var(var->variable_definition_value->variable_name); type = AstType::AST_VARIABLE; break;
-		default: type = AstType::AST_NOOP; break;
-		}
-	}
-
-	
-	return var->variable_definition_value;
-}
-
-void Visitor::eat_type(AstType type, AstType expected_type, std::shared_ptr<AST> node)
-{
-	if (type != expected_type)
-	{
-		std::stringstream err;
-		err << "Line " << node->error_line_num << ":\n" << node->error_line_contents
-			<< "\nExpected type " << ast_to_str(expected_type) << " but got " << ast_to_str(type) << "\n";
-		throw std::runtime_error(err.str());
-	}
-}
+//std::shared_ptr<AST> Visitor::goto_root_of_var(std::string name)
+//{
+//	auto var = get_var_from_name(name);
+//	AstType type = var->variable_definition_value->type;
+//	while (type == AstType::AST_VARIABLE)
+//	{
+//		type = AstType::AST_NOOP;
+//		switch (type)
+//		{
+//		case AstType::AST_VARIABLE: var = goto_root_of_var(var->variable_definition_value->variable_name); type = AstType::AST_VARIABLE; break;
+//		default: type = AstType::AST_NOOP; break;
+//		}
+//	}
+//
+//	
+//	return var->variable_definition_value;
+//}
+//
+//void Visitor::eat_type(AstType type, AstType expected_type, std::shared_ptr<AST> node)
+//{
+//	if (type != expected_type)
+//	{
+//		std::stringstream err;
+//		err << "Line " << node->error_line_num << ":\n" << node->error_line_contents
+//			<< "\nExpected type " << ast_to_str(expected_type) << " but got " << ast_to_str(type) << "\n";
+//		throw std::runtime_error(err.str());
+//	}
+//}
 
 std::shared_ptr<AST> Visitor::visit(std::shared_ptr<AST> node)
 {
@@ -419,32 +419,32 @@ std::shared_ptr<AST> Visitor::visit_var(std::shared_ptr<AST> node)
 	return nullptr;
 }
 
-std::shared_ptr<AST> Visitor::get_var_from_value(std::string value)
-{
-	for (auto& def : variable_defs)
-	{
-		if (def->string_value == value)
-		{
-			return def;
-		}
-	}
+//std::shared_ptr<AST> Visitor::get_var_from_value(std::string value)
+//{
+//	for (auto& def : variable_defs)
+//	{
+//		if (def->string_value == value)
+//		{
+//			return def;
+//		}
+//	}
+//
+//
+//	return nullptr;
+//}
 
-
-	return nullptr;
-}
-
-std::shared_ptr<AST> Visitor::get_var_from_name(std::string name)
-{
-	for (auto& def : variable_defs)
-	{
-		if (def->variable_definition_name == name || def->variable_name == name)
-		{
-			return def;
-		}
-	}
-
-	return nullptr;
-}
+//std::shared_ptr<AST> Visitor::get_var_from_name(std::string name)
+//{
+//	for (auto& def : variable_defs)
+//	{
+//		if (def->variable_definition_name == name || def->variable_name == name)
+//		{
+//			return def;
+//		}
+//	}
+//
+//	return nullptr;
+//}
 
 std::shared_ptr<AST> Visitor::visit_str(std::shared_ptr<AST> node)
 {

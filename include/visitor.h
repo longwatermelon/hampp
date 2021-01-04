@@ -1,5 +1,6 @@
 #pragma once
 #include "AST.h"
+#include "utils.h"
 #include <memory>
 #include <vector>
 #include <string>
@@ -18,8 +19,8 @@ struct Visitor
 	std::vector<std::shared_ptr<AST>> variable_defs;
 	std::vector<std::shared_ptr<AST>> function_defs;
 
-	std::shared_ptr<AST> goto_root_of_var(std::string name);
-	void eat_type(AstType type, AstType expected_type, std::shared_ptr<AST> node);
+	//std::shared_ptr<AST> goto_root_of_var(std::string name);
+	//void eat_type(AstType type, AstType expected_type, std::shared_ptr<AST> node);
 
 	std::shared_ptr<AST> visit(std::shared_ptr<AST> node);
 
@@ -27,9 +28,9 @@ struct Visitor
 
 	std::shared_ptr<AST> visit_var(std::shared_ptr<AST> node);
 
-	std::shared_ptr<AST> get_var_from_value(std::string value);
+	/*std::shared_ptr<AST> get_var_from_value(std::string value);
 
-	std::shared_ptr<AST> get_var_from_name(std::string name);
+	std::shared_ptr<AST> get_var_from_name(std::string name);*/
 
 	std::shared_ptr<AST> visit_str(std::shared_ptr<AST> node);
 	std::shared_ptr<AST> visit_bool(std::shared_ptr<AST> node);
