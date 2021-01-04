@@ -28,7 +28,7 @@ if (cmp(true, booleanvariable2))
 
 def integervariable = 12;
 
-if (cmp(integervariable, 15))
+if (cmp(integervariable, 12))
 {
     prount("integervariable is 12");
 };
