@@ -26,14 +26,35 @@ std::shared_ptr<AST> Visitor::builtin_function_print(std::vector<std::shared_ptr
 	for (auto& arg : args)
 	{
 		std::shared_ptr<AST> ast = get_var_from_name(arg->variable_name);
-
-		switch (ast->variable_definition_value->type)
+		AstType type = AstType::AST_VARIABLE;
+		
+		while (type == AstType::AST_VARIABLE)
 		{
-		case AstType::AST_STRING: std::cout << ast->variable_definition_value->string_value << " "; break;
-		case AstType::AST_BOOL: std::cout << ast->variable_definition_value->bool_value << " "; break;
-		case AstType::AST_INT: std::cout << ast->variable_definition_value->int_value << " "; break;
-		default: std::cout << ast; break;
+			type = AstType::AST_NOOP;
+			switch (ast->variable_definition_value->type)
+			{
+			case AstType::AST_STRING: std::cout << ast->variable_definition_value->string_value << " "; break;
+			case AstType::AST_BOOL: std::cout << ast->variable_definition_value->bool_value << " "; break;
+			case AstType::AST_INT: std::cout << ast->variable_definition_value->int_value << " "; break;
+			case AstType::AST_VARIABLE: {
+				auto type = AstType::AST_VARIABLE;
+				auto ast_var = get_var_from_name(ast->variable_definition_value->variable_name);
+				while (type == AstType::AST_VARIABLE)
+				{
+					type = AstType::AST_NOOP;
+					switch (ast_var->variable_definition_value->type)
+					{
+					case AstType::AST_BOOL: std::cout << ast_var->variable_definition_value->bool_value << " "; break;
+					case AstType::AST_INT: std::cout << ast_var->variable_definition_value->int_value << " "; break;
+					case AstType::AST_STRING: std::cout << ast_var->variable_definition_value->bool_value << " "; break;
+					case AstType::AST_VARIABLE: ast_var = get_var_from_name(ast_var->variable_definition_value->variable_definition_name); type = AstType::AST_VARIABLE; break;
+					}
+				}
+			} break;
+			default: std::cout << ast; break;
+			}
 		}
+		
 	}
 
 	std::cout << std::endl;
