@@ -11,6 +11,8 @@ struct Visitor
 	std::shared_ptr<AST> builtin_function_print(std::vector<std::shared_ptr<AST>> args);
 	std::shared_ptr<AST> builtin_function_destroy(std::vector< std::shared_ptr<AST>> args);
 	std::shared_ptr<AST> builtin_function_strcmp(std::vector<std::shared_ptr<AST>> args);
+	std::shared_ptr<AST> builtin_function_add(std::vector<std::shared_ptr<AST>> args, std::shared_ptr<AST> node);
+	std::shared_ptr<AST> builtin_function_subtract(std::vector<std::shared_ptr<AST>> args, std::shared_ptr<AST> node);
 
 	std::vector<std::shared_ptr<AST>> variable_defs;
 	std::vector<std::shared_ptr<AST>> function_defs;

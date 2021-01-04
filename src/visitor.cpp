@@ -174,6 +174,36 @@ std::shared_ptr<AST> Visitor::builtin_function_strcmp(std::vector<std::shared_pt
 	return ast_bool;
 }
 
+std::shared_ptr<AST> Visitor::builtin_function_add(std::vector<std::shared_ptr<AST>> args, std::shared_ptr<AST> node)
+{
+	if (args.size() != 2)
+	{
+		std::stringstream err;
+		err << "Line " << node->error_line_num << ":\n" << node->error_line_contents << "\n'add' takes two arguments (variable, amount) but "
+			<< args.size() << " arguments were supplied.";
+		throw std::runtime_error(err.str());
+	}
+
+	const auto variable = get_var_from_name(args[0]->variable_name);
+	variable->variable_definition_value->int_value += args[1]->int_value;
+	return std::make_shared<AST>(AstType::AST_NOOP);
+}
+
+std::shared_ptr<AST> Visitor::builtin_function_subtract(std::vector<std::shared_ptr<AST>> args, std::shared_ptr<AST> node)
+{
+	if (args.size() != 2)
+	{
+		std::stringstream err;
+		err << "Line " << node->error_line_num << ":\n" << node->error_line_contents << "\n'subtract' takes two arguments (variable, amount) but "
+			<< args.size() << " arguments were supplied.";
+		throw std::runtime_error(err.str());
+	}
+
+	const auto variable = get_var_from_name(args[0]->variable_name);
+	variable->variable_definition_value->int_value -= args[1]->int_value;
+	return std::make_shared<AST>(AstType::AST_NOOP);
+}
+
 std::shared_ptr<AST> Visitor::visit(std::shared_ptr<AST> node)
 {
 	switch (node->type)
@@ -295,6 +325,16 @@ std::shared_ptr<AST> Visitor::visit_func_call(std::shared_ptr<AST> node)
 	if (node->function_call_name == "cmp")
 	{
 		return builtin_function_strcmp(node->function_call_args);
+	}
+
+	if (node->function_call_name == "add")
+	{
+		return builtin_function_add(node->function_call_args, node);
+	}
+
+	if (node->function_call_name == "subtract")
+	{
+		return builtin_function_subtract(node->function_call_args, node);
 	}
 
 	std::shared_ptr<AST> func_def = get_func_def(node->function_call_name);

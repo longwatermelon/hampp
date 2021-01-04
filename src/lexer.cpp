@@ -12,11 +12,15 @@ Lexer::Lexer(std::string ctn)
 	{
 		currentCharacter = contents.at(index);
 	}
+	else
+	{
+		exit(0);
+	}
 }
 
 void Lexer::advance()
 {
-	if(index < contents.size() - 1)
+	if (index < contents.size() - 1)
 	{
 		++index;
 		currentCharacter = contents.at(index);
