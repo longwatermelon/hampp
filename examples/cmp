@@ -1,17 +1,34 @@
 def variable = "test";
-def condition = strcmp(variable, "test");
+def condition = cmp(variable, "test");
 
 if (condition)
 {
     prount("variable and test are equal");
 };
 
-if (strcmp(variable, "test"))
+if (cmp(variable, "test"))
 {
     prount("variable and test are equal");
 };
 
-if (strcmp(variable, "this is not test"))
+if (cmp(variable, "this is not test"))
 {
     prount("variable and this is not test are equal");
+};
+
+
+def booleanvariable = true;
+def booleanvariable2 = booleanvariable;
+
+if (cmp(true, booleanvariable2))
+{
+    prount("booleanvariable2 is true");
+};
+
+
+def integervariable = 12;
+
+if (cmp(integervariable, 15))
+{
+    prount("integervariable is 12");
 };
