@@ -10,6 +10,8 @@ enum class TokenType
     TOKEN_EQUALS, // 4
     TOKEN_STRING,
     TOKEN_INT,
+    TOKEN_LBRACKET,
+    TOKEN_RBRACKET,
     TOKEN_COMMA, // 6
     TOKEN_LBRACE, // 7
     TOKEN_RBRACE, // 8

@@ -102,6 +102,8 @@ Token Lexer::get_next_token()
 		case ',': return Token(TokenType::TOKEN_COMMA, collect_single_char_string());
 		case '{': return Token(TokenType::TOKEN_LBRACE, collect_single_char_string());
 		case '}': return Token(TokenType::TOKEN_RBRACE, collect_single_char_string());
+		case '[': return Token(TokenType::TOKEN_LBRACKET, collect_single_char_string());
+		case ']': return Token(TokenType::TOKEN_RBRACKET, collect_single_char_string());
 		case '"': return Token(TokenType::TOKEN_STRING, collect_string());
 		default:
 			if (isalnum(currentCharacter))

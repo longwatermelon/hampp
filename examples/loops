@@ -1,16 +1,4 @@
-def index = 0;
-
-func recursiveLoop()
-{
-    prount(index);
-    add(index, 1);
-
-    if (cmp(cmp(index, 5), false))
-    {
-        recursiveLoop();
-    };
-};
-
-recursiveLoop();
-destroy(index);
-prount("end of file");
+def integer = 1;
+prount(integer);
+def listvariable = [1, 2, 3];
+prount(index(listvariable, 0));

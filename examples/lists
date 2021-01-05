@@ -1,0 +1,7 @@
+def list = [1, 2, "some value", 90];
+def list2 = ["your mom", "test"];
+
+prount(index(list, 0));
+prount(index(list, 2));
+
+prount(index(list2, 3));

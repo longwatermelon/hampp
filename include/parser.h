@@ -17,6 +17,8 @@ struct Parser
 private:
 	std::shared_ptr<AST> parse_string();
 	std::shared_ptr<AST> parse_int();
+	std::shared_ptr<AST> parse_list();
+
 	std::shared_ptr<AST> parse_expr();
 	std::shared_ptr<AST> parse_function_call();
 	std::shared_ptr<AST> parse_variable();

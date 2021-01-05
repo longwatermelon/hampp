@@ -290,6 +290,40 @@ std::shared_ptr<AST> Visitor::builtin_function_subtract(std::vector<std::shared_
 	return std::make_shared<AST>(AstType::AST_NOOP);
 }
 
+std::shared_ptr<AST> Visitor::builtin_function_index(std::vector<std::shared_ptr<AST>> args, std::shared_ptr<AST> node)
+{
+	if (args.size() != 2)
+	{
+		std::stringstream err;
+		err << "Index takes 2 arguments (list, index) but " << args.size() << " arguments were supplied.\n";
+		throw std::runtime_error(err.str());
+	}
+	auto list = get_var_from_name(*this, args[0]->variable_name);
+	auto index = args[1]->int_value;
+
+	if (index >= list->variable_definition_value->list_value.size())
+	{
+		std::stringstream err;
+		err << "Index out of range: " << list->variable_definition_name << " has a size of " << list->variable_definition_value->list_value.size() << "\n";
+		throw std::runtime_error(err.str());
+	}
+
+	std::shared_ptr<AST> ast;
+	switch (list->variable_definition_value->list_value[index]->type)
+	{
+	case AstType::AST_INT: 
+		ast = std::make_shared<AST>(AstType::AST_INT); 
+		ast->int_value = list->variable_definition_value->list_value[index]->int_value;
+		break;
+	case AstType::AST_STRING: 
+		ast = std::make_shared<AST>(AstType::AST_STRING); 
+		ast->string_value = list->variable_definition_value->list_value[index]->string_value; 
+		break;
+	}
+
+	return ast;
+}
+
 //std::shared_ptr<AST> Visitor::builtin_function_random_randint(std::vector<std::shared_ptr<AST>> args, std::shared_ptr<AST> node)
 //{
 //	if (args.size() != 2)
@@ -375,6 +409,7 @@ std::shared_ptr<AST> Visitor::visit(std::shared_ptr<AST> node)
 	case AstType::AST_FUNCTION_DEFINITION: return add_func_def(node);
 	case AstType::AST_STRING: return visit_str(node);
 	case AstType::AST_INT: return visit_int(node);
+	case AstType::AST_LIST: return visit_list(node);
 	case AstType::AST_BOOL: return visit_bool(node);
 	case AstType::AST_COMPOUND: return visit_compound(node);
 	case AstType::AST_CONDITIONAL: return visit_conditional(node);
@@ -461,6 +496,11 @@ std::shared_ptr<AST> Visitor::visit_int(std::shared_ptr<AST> node)
 	return node;
 }
 
+std::shared_ptr<AST> Visitor::visit_list(std::shared_ptr<AST> node)
+{
+	return node;
+}
+
 std::shared_ptr<AST> Visitor::visit_compound(std::shared_ptr<AST> node)
 {
 	for (auto& item : node->compound_value)
@@ -501,6 +541,11 @@ std::shared_ptr<AST> Visitor::visit_func_call(std::shared_ptr<AST> node)
 	if (node->function_call_name == "random_randint")
 	{
 		return builtin_function_random_randint(node->function_call_args, node, *this);
+	}
+
+	if (node->function_call_name == "index")
+	{
+		return builtin_function_index(node->function_call_args, node);
 	}
 
 	std::shared_ptr<AST> func_def = get_func_def(node->function_call_name);

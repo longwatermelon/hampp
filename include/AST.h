@@ -12,6 +12,7 @@ enum class AstType
 	AST_STRING,
 	AST_BOOL,
 	AST_INT,
+	AST_LIST,
 	AST_COMPOUND,
 	AST_CONDITIONAL,
 	AST_NOOP
@@ -94,6 +95,9 @@ struct AST
 	// ast conditional
 	std::shared_ptr<AST> conditional_body;
 	std::shared_ptr<AST> conditional_condition;
+
+	// ast list
+	std::vector<std::shared_ptr<AST>> list_value;
 
 	// error properties
 	std::string error_line_contents;

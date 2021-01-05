@@ -46,6 +46,27 @@ std::shared_ptr<AST> Parser::parse_int()
 	return ast;
 }
 
+std::shared_ptr<AST> Parser::parse_list()
+{
+	eat(TokenType::TOKEN_LBRACKET);
+	const auto ast = std::make_shared<AST>(AstType::AST_LIST);
+	int intvalue;
+	while (currentToken.m_type != TokenType::TOKEN_RBRACKET)
+	{
+		switch (currentToken.m_type)
+		{
+		case TokenType::TOKEN_INT: ast->list_value.emplace_back(parse_int()); break;
+		case TokenType::TOKEN_STRING: ast->list_value.emplace_back(parse_string()); break;
+		}
+
+		if (currentToken.m_type != TokenType::TOKEN_COMMA) { break; }
+		eat(TokenType::TOKEN_COMMA);
+	}
+	eat(TokenType::TOKEN_RBRACKET);
+
+	return ast;
+}
+
 std::shared_ptr<AST> Parser::parse_expr()
 {
 	switch (currentToken.m_type)
@@ -53,6 +74,7 @@ std::shared_ptr<AST> Parser::parse_expr()
 		case TokenType::TOKEN_STRING: return parse_string();
 		case TokenType::TOKEN_ID: return parse_id();
 		case TokenType::TOKEN_INT: return parse_int();
+		case TokenType::TOKEN_LBRACKET: return parse_list();
 	}
 
 	return std::make_shared<AST>(AstType::AST_NOOP);
@@ -183,6 +205,7 @@ std::shared_ptr<AST> Parser::parse_statement()
 		case TokenType::TOKEN_ID: return parse_id();
 		case TokenType::TOKEN_STRING: return parse_string();
 		case TokenType::TOKEN_INT: return parse_int();
+		case TokenType::TOKEN_LBRACKET: return parse_list();
 		default: break;
 	}
 
