@@ -12,3 +12,5 @@ void eat_type(AstType type, AstType expected_type, std::shared_ptr<AST> node);
 
 std::shared_ptr<AST> get_var_from_value(struct Visitor visitor, std::string value);
 std::shared_ptr<AST> get_var_from_name(struct Visitor visitor, std::string name);
+
+void modify_variable(struct Visitor visitor, std::shared_ptr<AST> variable, std::shared_ptr<AST> value);

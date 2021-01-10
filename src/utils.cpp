@@ -55,3 +55,20 @@ std::shared_ptr<AST> get_var_from_name(Visitor visitor, std::string name)
 	return nullptr;
 }
 
+void modify_variable(Visitor visitor, std::shared_ptr<AST> variable, std::shared_ptr<AST> value)
+{
+	switch (value->variable_definition_value->type)
+	{
+	case AstType::AST_STRING: variable->variable_definition_value->string_value = value->variable_definition_value->string_value; break;
+	case AstType::AST_INT: variable->variable_definition_value->int_value = value->variable_definition_value->int_value; break;
+	case AstType::AST_VARIABLE: {
+		auto temp = goto_root_of_var(visitor, value->variable_definition_value->variable_name);
+		switch (temp->type)
+		{
+		case AstType::AST_INT: variable->variable_definition_value->int_value = temp->int_value; break;
+		case AstType::AST_STRING: variable->variable_definition_value->string_value = temp->string_value; break;
+		}
+	}
+	}
+}
+
