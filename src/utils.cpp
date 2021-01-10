@@ -2,10 +2,12 @@
 
 std::shared_ptr<AST> goto_root_of_var(Visitor visitor, std::string name)
 {
+	bool is_var = false;
 	auto var = get_var_from_name(visitor, name);
 	AstType type = var->variable_definition_value->type;
 	while (type == AstType::AST_VARIABLE)
 	{
+		is_var = true;
 		type = AstType::AST_NOOP;
 		switch (type)
 		{
@@ -14,8 +16,7 @@ std::shared_ptr<AST> goto_root_of_var(Visitor visitor, std::string name)
 		}
 	}
 
-
-	return var->variable_definition_value;
+	return (is_var ? var->variable_definition_value : var);
 }
 
 void eat_type(AstType type, AstType expected_type, std::shared_ptr<AST> node)

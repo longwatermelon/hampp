@@ -1,0 +1,15 @@
+def list = [99, 100, 101];
+
+
+func loop(index, end)
+{
+    prount(index(list, index));
+    add(index, 1);
+
+    if (cmp(cmp(index, end), false))
+    {
+        loop(index, end);
+    };
+};
+
+loop(0, 10);

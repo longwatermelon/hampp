@@ -299,7 +299,20 @@ std::shared_ptr<AST> Visitor::builtin_function_index(std::vector<std::shared_ptr
 		throw std::runtime_error(err.str());
 	}
 	auto list = get_var_from_name(*this, args[0]->variable_name);
-	auto index = args[1]->int_value;
+	int index;
+	switch (args[1]->type)
+	{
+	case AstType::AST_INT: index = args[1]->int_value; break;
+	case AstType::AST_VARIABLE_DEFINITION:
+	case AstType::AST_VARIABLE: {
+		auto var = goto_root_of_var(*this, args[1]->variable_name);
+		switch (var->type)
+		{
+		case AstType::AST_VARIABLE_DEFINITION: index = var->variable_definition_value->int_value; break;
+		case AstType::AST_INT: index = var->int_value; break;
+		}
+	}; break;
+	}
 
 	if (index >= list->variable_definition_value->list_value.size())
 	{
