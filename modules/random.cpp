@@ -18,8 +18,8 @@ std::shared_ptr<AST> builtin_function_random_randint(std::vector<std::shared_ptr
 	if (args[0]->type == AstType::AST_VARIABLE)
 	{
 		var1 = goto_root_of_var(visitor, args[0]->variable_name);
-		min = var1->int_value;
-		eat_type(var1->type, AstType::AST_INT, node);
+		min = var1->variable_definition_value->int_value;
+		eat_type(var1->variable_definition_value->type, AstType::AST_INT, node);
 	}
 	else
 	{
@@ -30,8 +30,8 @@ std::shared_ptr<AST> builtin_function_random_randint(std::vector<std::shared_ptr
 	if (args[1]->type == AstType::AST_VARIABLE)
 	{
 		var2 = goto_root_of_var(visitor, args[1]->variable_name);
-		max = var2->int_value;
-		eat_type(var2->type, AstType::AST_INT, node);
+		max = var2->variable_definition_value->int_value;
+		eat_type(var2->variable_definition_value->type, AstType::AST_INT, node);
 	}
 	else
 	{
