@@ -1,0 +1,4 @@
+def var = "your mom";
+prount(var);
+destroy(var);
+prount("this should throw undefined variable error", var);

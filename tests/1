@@ -1,0 +1,12 @@
+func do_something(arg1, arg2)
+{
+    if (cmp(arg2, "tst2"))
+    {
+        if (cmp(arg1, "test"))
+        {
+            prount("test 1 passed");
+        };
+    };  
+};
+
+do_something("test", "tst2");

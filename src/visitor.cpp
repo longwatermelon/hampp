@@ -388,38 +388,11 @@ std::shared_ptr<AST> Visitor::visit_var(std::shared_ptr<AST> node)
 	}
 
 	std::stringstream msg;
-	msg << "Undefined variable '" << node->variable_name << "' on line " <<
+	msg << "\nUndefined variable '" << node->variable_name << "' on line " <<
 		node->error_line_num << ":\n" << node->error_line_contents << "\n" << node->error_arrow << "\n";
 	throw std::runtime_error(msg.str());
 	return nullptr;
 }
-
-//std::shared_ptr<AST> Visitor::get_var_from_value(std::string value)
-//{
-//	for (auto& def : variable_defs)
-//	{
-//		if (def->string_value == value)
-//		{
-//			return def;
-//		}
-//	}
-//
-//
-//	return nullptr;
-//}
-
-//std::shared_ptr<AST> Visitor::get_var_from_name(std::string name)
-//{
-//	for (auto& def : variable_defs)
-//	{
-//		if (def->variable_definition_name == name || def->variable_name == name)
-//		{
-//			return def;
-//		}
-//	}
-//
-//	return nullptr;
-//}
 
 std::shared_ptr<AST> Visitor::visit_str(std::shared_ptr<AST> node)
 {
@@ -493,7 +466,7 @@ std::shared_ptr<AST> Visitor::visit_func_call(std::shared_ptr<AST> node)
 	if (func_def == nullptr)
 	{
 		std::stringstream msg;
-		msg << "Undefined method '" << node->function_call_name << "' on line " 
+		msg << "\nUndefined method '" << node->function_call_name << "' on line " 
 			<< node->error_line_num << ":\n" << node->error_line_contents << "\n" 
 			<< node->error_arrow << std::endl;
 		throw std::runtime_error(msg.str());
@@ -521,7 +494,7 @@ std::shared_ptr<AST> Visitor::visit_func_call(std::shared_ptr<AST> node)
 		}
 		else
 		{
-			err << "Line " << node->error_line_num << ":\n" << node->error_line_contents << "\n" << "Error: Function '" << func_def->function_definition_name << "' takes " << func_def->function_definition_params.size() << " arguments (" << param_display << ") but " << node->function_call_args.size() << " arguments were supplied.\n";
+			err << "\nLine " << node->error_line_num << ":\n" << node->error_line_contents << "\n" << "Error: Function '" << func_def->function_definition_name << "' takes " << func_def->function_definition_params.size() << " arguments (" << param_display << ") but " << node->function_call_args.size() << " arguments were supplied.\n";
 			throw std::runtime_error(err.str());
 		}
 		
@@ -606,7 +579,7 @@ void Visitor::check_compatible_types(AstType type1, AstType type2, std::shared_p
 	if (type1 != type2)
 	{
 		std::stringstream err;
-		err << "Line " << arg->error_line_num << ":\n" << arg->error_line_contents << "\nIncompatible types: Cannot compare " << ast_to_str(type1) << " with " << ast_to_str(type2);
+		err << "\nLine " << arg->error_line_num << ":\n" << arg->error_line_contents << "\nIncompatible types: Cannot compare " << ast_to_str(type1) << " with " << ast_to_str(type2);
 		throw std::runtime_error(err.str());
 	}
 }
