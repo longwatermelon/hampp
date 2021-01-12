@@ -129,29 +129,12 @@ std::shared_ptr<AST> Visitor::builtin_function_strcmp(std::vector<std::shared_pt
 			case AstType::AST_INT: var1value = var1->variable_definition_value->int_value; type1 = AstType::AST_INT; break;
 			case AstType::AST_BOOL: var1value = var1->variable_definition_value->bool_value; type1 = AstType::AST_BOOL; break;
 			case AstType::AST_VARIABLE:
-				auto type = AstType::AST_VARIABLE;
-				std::string name;
-				if (var1->variable_definition_value->variable_name == "") { name = var1->variable_definition_value->variable_definition_name; }
-				else {
-					name = var1->variable_definition_value->variable_name;
-				}
-			
-				auto ast_var = get_var_from_name(*this, name);
-				while (type == AstType::AST_VARIABLE)
+				auto ast_var = goto_root_of_var(*this, var1->variable_definition_value->variable_name);
+				switch (ast_var->type)
 				{
-					type = AstType::AST_NOOP;
-					switch (ast_var->variable_definition_value->type)
-					{
-					case AstType::AST_BOOL: var1value = ast_var->variable_definition_value->bool_value; type1 = AstType::AST_BOOL; break;
-					case AstType::AST_INT: var1value = ast_var->variable_definition_value->int_value; type1 = AstType::AST_INT;  break;
-					case AstType::AST_STRING: var1value = ast_var->variable_definition_value->string_value; type1 = AstType::AST_STRING;  break;
-					case AstType::AST_VARIABLE: {
-						std::string name;
-						if (ast_var->variable_definition_value->variable_name == "") { name = ast_var->variable_definition_value->variable_definition_name; }
-						else { name = ast_var->variable_definition_value->variable_name; }
-						ast_var = get_var_from_name(*this, name); type = AstType::AST_VARIABLE; break; 
-					}
-					}
+				case AstType::AST_BOOL: var1value = ast_var->variable_definition_value->bool_value; type1 = AstType::AST_BOOL; break;
+				case AstType::AST_INT: var1value = ast_var->variable_definition_value->int_value; type1 = AstType::AST_INT;  break;
+				case AstType::AST_STRING: var1value = ast_var->variable_definition_value->string_value; type1 = AstType::AST_STRING;  break;
 				}
 			}
 		}
@@ -207,25 +190,12 @@ std::shared_ptr<AST> Visitor::builtin_function_strcmp(std::vector<std::shared_pt
 			case AstType::AST_INT: var2value = var2->variable_definition_value->int_value; type2 = AstType::AST_INT; break;
 			case AstType::AST_BOOL: var2value = var2->variable_definition_value->bool_value; type2 = AstType::AST_BOOL; break;
 			case AstType::AST_VARIABLE: 
-				auto type = AstType::AST_VARIABLE;
-				auto ast_var = get_var_from_name(*this, var2->variable_definition_value->variable_name);
-				while (type == AstType::AST_VARIABLE)
+				auto ast_var = goto_root_of_var(*this, var2->variable_definition_value->variable_name);
+				switch (ast_var->type)
 				{
-					type = AstType::AST_NOOP;
-					switch (ast_var->variable_definition_value->type)
-					{
-					case AstType::AST_BOOL: var2value = ast_var->variable_definition_value->bool_value; type2 = AstType::AST_BOOL;  break;
-					case AstType::AST_INT: var2value = ast_var->variable_definition_value->int_value; type2 = AstType::AST_INT; break;
-					case AstType::AST_STRING: var2value = ast_var->variable_definition_value->string_value; type2 = AstType::AST_INT;  break;
-					case AstType::AST_VARIABLE: {
-						std::string name;
-						if (ast_var->variable_definition_value->variable_name == "") { name = ast_var->variable_definition_value->variable_definition_name; }
-						else { name = ast_var->variable_name; }
-						ast_var = get_var_from_name(*this, name);
-						type = AstType::AST_VARIABLE;
-						break; 
-					}
-					}
+				case AstType::AST_BOOL: var2value = ast_var->variable_definition_value->bool_value; type2 = AstType::AST_BOOL;  break;
+				case AstType::AST_INT: var2value = ast_var->variable_definition_value->int_value; type2 = AstType::AST_INT; break;
+				case AstType::AST_STRING: var2value = ast_var->variable_definition_value->string_value; type2 = AstType::AST_INT;  break;
 				}
 			}
 

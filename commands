@@ -1,3 +1,0 @@
-ignore this file
-
-g++ -o build/hampp -I modules src/*.cpp modules/*.cpp
