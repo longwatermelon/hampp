@@ -39,20 +39,14 @@ std::shared_ptr<AST> Visitor::builtin_function_print(std::vector<std::shared_ptr
 			case AstType::AST_BOOL: std::cout << ast->bool_value << " "; break;
 			case AstType::AST_INT: std::cout << ast->int_value << " "; break;
 			case AstType::AST_VARIABLE: {
-				auto type = AstType::AST_VARIABLE;
-				auto ast_var = get_var_from_name(*this, ast->variable_name);
-				while (type == AstType::AST_VARIABLE)
+				auto ast_var = goto_root_of_var(*this, ast->variable_name);
+				switch (ast_var->type)
 				{
-					type = AstType::AST_NOOP;
-					switch (ast_var->type)
-					{
-					case AstType::AST_BOOL: std::cout << ast_var->bool_value << " "; break;
-					case AstType::AST_INT: std::cout << ast_var->int_value << " "; break;
-					case AstType::AST_STRING: std::cout << ast_var->string_value << " "; break;
-					case AstType::AST_VARIABLE: ast_var = get_var_from_name(*this, ast_var->variable_definition_name); type = AstType::AST_VARIABLE; break;
-					}
+				case AstType::AST_STRING: std::cout << ast->string_value << " "; break;
+				case AstType::AST_BOOL: std::cout << ast->bool_value << " "; break;
+				case AstType::AST_INT: std::cout << ast->int_value << " "; break;
 				}
-			} break;
+			}; break;
 			default: std::cout << ast; break;
 			}
 		}
@@ -268,8 +262,10 @@ std::shared_ptr<AST> Visitor::builtin_function_index(std::vector<std::shared_ptr
 		err << "Index takes 2 arguments (list, index) but " << args.size() << " arguments were supplied.\n";
 		throw std::runtime_error(err.str());
 	}
+
 	auto list = get_var_from_name(*this, args[0]->variable_name);
 	int index;
+
 	switch (args[1]->type)
 	{
 	case AstType::AST_INT: index = args[1]->int_value; break;
@@ -336,10 +332,6 @@ std::shared_ptr<AST> Visitor::visit_vardef(std::shared_ptr<AST> node)
 		if (node->variable_definition_name == def->variable_definition_name)
 		{
 			modify_variable(*this, def, node);
-			/*std::stringstream err;
-			err << "Reinitialized a variable on line " << node->error_line_num << ":\n" << node->error_line_contents << "\n"
-				<< "\n" << "Variable previously initialized on line " << def->error_line_num << ":\n" << def->error_line_contents << "\n";
-			throw std::runtime_error(err.str());*/
 		}
 	}
 
@@ -396,40 +388,19 @@ std::shared_ptr<AST> Visitor::visit_compound(std::shared_ptr<AST> node)
 
 std::shared_ptr<AST> Visitor::visit_func_call(std::shared_ptr<AST> node)
 {
-	if (node->function_call_name == "prount")
-	{
-		return builtin_function_print(node->function_call_args);
-	}
+	if (node->function_call_name == "prount") { return builtin_function_print(node->function_call_args); }
 
-	if (node->function_call_name == "destroy")
-	{
-		return builtin_function_destroy(node->function_call_args);
-	}
+	if (node->function_call_name == "destroy") { return builtin_function_destroy(node->function_call_args); }
 
-	if (node->function_call_name == "cmp")
-	{
-		return builtin_function_strcmp(node->function_call_args);
-	}
+	if (node->function_call_name == "cmp") { return builtin_function_strcmp(node->function_call_args); }
 
-	if (node->function_call_name == "add")
-	{
-		return builtin_function_add(node->function_call_args, node);
-	}
+	if (node->function_call_name == "add") { return builtin_function_add(node->function_call_args, node); }
 
-	if (node->function_call_name == "subtract")
-	{
-		return builtin_function_subtract(node->function_call_args, node);
-	}
+	if (node->function_call_name == "subtract") { return builtin_function_subtract(node->function_call_args, node); }
 
-	if (node->function_call_name == "random_randint")
-	{
-		return builtin_function_random_randint(node->function_call_args, node, *this);
-	}
+	if (node->function_call_name == "random_randint") { return builtin_function_random_randint(node->function_call_args, node, *this); }
 
-	if (node->function_call_name == "index")
-	{
-		return builtin_function_index(node->function_call_args, node);
-	}
+	if (node->function_call_name == "index") { return builtin_function_index(node->function_call_args, node); }
 
 	std::shared_ptr<AST> func_def = get_func_def(node->function_call_name);
 
