@@ -1,9 +1,16 @@
+def variable = 100;
+
 strooct test
 {
     def var = 5;
-    def var2 = 9;
+    def var2 = variable;
+    def var3 = var2;
 };
 
 def testing = new test;
 prount(testing.var);
 prount(testing.var2);
+prount(testing.var3);
+
+def testing.var = 4000;
+prount(testing.var);

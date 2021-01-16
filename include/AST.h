@@ -12,6 +12,7 @@ enum class AstType
 	AST_STRUCT,
 	AST_STRUCT_INSTANCE,
 	AST_INSTANCE_MEMBER,
+	AST_INSTANCE_MEMBER_MODIFICATION,
 	AST_STRING,
 	AST_BOOL,
 	AST_INT,
@@ -85,6 +86,11 @@ struct AST
 	// ast instance member
 	std::string instance_member_name;
 	std::string instance_member_instance_name;
+
+	// ast instance member modification
+	std::string modified_instance_name;
+	std::shared_ptr<AST> modified_member_value;
+	std::string modified_member_name;
 
 	// error properties
 	std::string error_line_contents;

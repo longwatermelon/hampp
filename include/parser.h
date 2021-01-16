@@ -38,5 +38,7 @@ private:
 
 	std::shared_ptr<AST> parse_conditional();
 
+	std::shared_ptr<AST> parse_instance_member_modification();
+
 	void init_error_values(std::shared_ptr<AST> node);
 };

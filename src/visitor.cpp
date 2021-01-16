@@ -324,6 +324,7 @@ std::shared_ptr<AST> Visitor::visit(std::shared_ptr<AST> node)
 	case AstType::AST_STRUCT: return visit_struct_def(node);
 	case AstType::AST_STRUCT_INSTANCE: return visit_instance(node);
 	case AstType::AST_INSTANCE_MEMBER: return visit_instance_member(node);
+	case AstType::AST_INSTANCE_MEMBER_MODIFICATION: return modify_instance_member(node);
 	case AstType::AST_NOOP: return node;
 	}
 	
@@ -561,6 +562,31 @@ std::shared_ptr<AST> Visitor::get_instance_member(std::shared_ptr<AST> instance,
 	}
 
 	return nullptr;
+}
+
+std::shared_ptr<AST> Visitor::modify_instance_member(std::shared_ptr<AST> node)
+{
+	const auto instance = get_var_from_name(*this, node->modified_instance_name);
+	const auto member = get_instance_member(instance, node->modified_member_name);
+
+	switch (node->modified_member_value->type)
+	{
+	case AstType::AST_INT: member->variable_definition_value->int_value = node->modified_member_value->int_value; break;
+	case AstType::AST_BOOL: member->variable_definition_value->bool_value = node->modified_member_value->bool_value; break;
+	case AstType::AST_STRING: member->variable_definition_value->string_value = node->modified_member_value->string_value; break;
+	case AstType::AST_VARIABLE_DEFINITION:
+	case AstType::AST_VARIABLE: {
+		const auto ast = goto_root_of_var(*this, node->modified_member_name);
+		switch (ast->type)
+		{
+		case AstType::AST_INT: member->variable_definition_value->int_value = node->modified_member_value->int_value; break;
+		case AstType::AST_BOOL: member->variable_definition_value->bool_value = node->modified_member_value->bool_value; break;
+		case AstType::AST_STRING: member->variable_definition_value->string_value = node->modified_member_value->string_value; break;
+		}
+	}; break;
+	}
+
+	return node;
 }
 
 std::shared_ptr<AST> Visitor::visit_conditional(std::shared_ptr<AST> node)

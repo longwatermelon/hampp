@@ -117,6 +117,15 @@ std::shared_ptr<AST> Parser::parse_variable_definition()
 	eat(TokenType::TOKEN_ID);
 	const auto varName = currentToken.m_value;
 	eat(TokenType::TOKEN_ID);
+
+	if (currentToken.m_type == TokenType::TOKEN_PERIOD) // struct member modification
+	{
+		const auto ast = parse_instance_member_modification();
+		init_error_values(ast);
+
+		return ast;
+	}
+
 	eat(TokenType::TOKEN_EQUALS);
 	
 	retVal->variable_definition_name = varName;
@@ -339,6 +348,23 @@ std::shared_ptr<AST> Parser::parse_conditional()
 
 	eat(TokenType::TOKEN_RBRACE);
 	
+	return ast;
+}
+
+std::shared_ptr<AST> Parser::parse_instance_member_modification()
+{
+	const auto ast = std::make_shared<AST>(AstType::AST_INSTANCE_MEMBER_MODIFICATION);
+
+	// current token is period
+	ast->modified_instance_name = prevToken.m_value;
+	eat(TokenType::TOKEN_PERIOD);
+	ast->modified_member_name = currentToken.m_value;
+	eat(TokenType::TOKEN_ID);
+
+	eat(TokenType::TOKEN_EQUALS);
+
+	ast->modified_member_value = parse_expr();
+
 	return ast;
 }
 
