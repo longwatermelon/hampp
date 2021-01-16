@@ -4,6 +4,6 @@ strooct test
     def var2 = 9;
 };
 
-def test = new test;
-prount(test.var);
-prount(test.var2);
+def testing = new test;
+prount(testing.var);
+prount(testing.var2);

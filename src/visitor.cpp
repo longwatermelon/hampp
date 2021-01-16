@@ -341,10 +341,17 @@ std::shared_ptr<AST> Visitor::visit_vardef(std::shared_ptr<AST> node)
 		}
 	}
 
-	if (node->variable_definition_value->type == AstType::AST_STRUCT_INSTANCE)
+	/*AstType type = node->type;
+	if (node->variable_definition_value != nullptr) type = node->variable_definition_value->type;*/
+
+	if (node->variable_definition_value != nullptr)
 	{
-		visit(node->variable_definition_value);
+		if (node->variable_definition_value->type == AstType::AST_STRUCT_INSTANCE)
+		{
+			visit(node->variable_definition_value);
+		}
 	}
+	
 
 	variable_defs.emplace_back(node);
 	return node;
@@ -395,12 +402,13 @@ std::shared_ptr<AST> Visitor::visit_instance(std::shared_ptr<AST> node)
 		node->instance_members.emplace_back(member);
 	}
 
+	visit_vardef(node);
 	return node;
 }
 
 std::shared_ptr<AST> Visitor::visit_instance_member(std::shared_ptr<AST> node)
 {
-	const auto instance = get_struct_def(node->instance_member_instance_name);
+	auto instance = get_var_from_name(*this, node->instance_member_instance_name);
 	const auto member = get_instance_member(instance, node->instance_member_name);
 
 	return member;
@@ -544,7 +552,7 @@ std::shared_ptr<AST> Visitor::get_struct_def(std::string name)
 
 std::shared_ptr<AST> Visitor::get_instance_member(std::shared_ptr<AST> instance, std::string var_name)
 {
-	for (const auto& member : instance->struct_definition_members)
+	for (const auto& member : instance->variable_definition_value->instance_members)
 	{
 		if (member->variable_definition_name == var_name)
 		{
