@@ -2,24 +2,23 @@
 
 std::shared_ptr<AST> goto_root_of_var(Visitor visitor, std::string name)
 {
-	bool is_var = false;
 	auto var = get_var_from_name(visitor, name);
-	AstType type = var->variable_definition_value->type;
+	AstType type = var->type;
 	while (type == AstType::AST_VARIABLE || type == AstType::AST_VARIABLE_DEFINITION)
 	{
-		is_var = true;
-		type = AstType::AST_NOOP;
-		switch (type)
+		if (var->variable_definition_value == nullptr) var = get_var_from_name(visitor, var->variable_name);
+
+		switch (var->type)
 		{
-		case AstType::AST_VARIABLE_DEFINITION: var = goto_root_of_var(visitor, var->variable_definition_name); type = AstType::AST_VARIABLE; break;
+		case AstType::AST_VARIABLE_DEFINITION: var = var->variable_definition_value; type = AstType::AST_VARIABLE_DEFINITION; break;
 		case AstType::AST_VARIABLE: var = goto_root_of_var(visitor, var->variable_definition_value->variable_name); type = AstType::AST_VARIABLE; break;
 		default: type = AstType::AST_NOOP; break;
 		}
+
+		type = var->type;
 	}
 
-	if (var->type == AstType::AST_VARIABLE_DEFINITION) { return var->variable_definition_value; }
-
-	return (is_var ? var->variable_definition_value : var);
+	return var;
 }
 
 void eat_type(AstType type, AstType expected_type, std::shared_ptr<AST> node)

@@ -129,9 +129,9 @@ std::shared_ptr<AST> Visitor::builtin_function_strcmp(std::vector<std::shared_pt
 				auto ast_var = goto_root_of_var(*this, var1->variable_definition_value->variable_name);
 				switch (ast_var->type)
 				{
-				case AstType::AST_BOOL: var1value = ast_var->variable_definition_value->bool_value; type1 = AstType::AST_BOOL; break;
-				case AstType::AST_INT: var1value = ast_var->variable_definition_value->int_value; type1 = AstType::AST_INT;  break;
-				case AstType::AST_STRING: var1value = ast_var->variable_definition_value->string_value; type1 = AstType::AST_STRING;  break;
+				case AstType::AST_BOOL: var1value = ast_var->bool_value; type1 = AstType::AST_BOOL; break;
+				case AstType::AST_INT: var1value = ast_var->int_value; type1 = AstType::AST_INT;  break;
+				case AstType::AST_STRING: var1value = ast_var->string_value; type1 = AstType::AST_STRING;  break;
 				}
 			}
 		}
