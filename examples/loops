@@ -1,4 +1,0 @@
-def integer = 1;
-prount(integer);
-def listvariable = [1, 2, 3];
-prount(index(listvariable, 0));

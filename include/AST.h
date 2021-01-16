@@ -9,6 +9,9 @@ enum class AstType
 	AST_VARIABLE,
 	AST_FUNCTION_DEFINITION,
 	AST_FUNCTION_CALL,
+	AST_STRUCT,
+	AST_STRUCT_INSTANCE,
+	AST_INSTANCE_MEMBER,
 	AST_STRING,
 	AST_BOOL,
 	AST_INT,
@@ -18,35 +21,6 @@ enum class AstType
 	AST_NOOP
 };
 
-// static std::string AstToStr(AstType type)
-// {
-// 	switch (type)
-// 	{
-// 	case AstType::AST_VARIABLE_DEFINITION:
-// 		return "variable definition";
-// 		break;
-// 	case AstType::AST_VARIABLE:
-// 		return "variable";
-// 		break;
-// 	case AstType::AST_FUNCTION_DEFINITION:
-// 		return "function definition";
-// 		break;
-// 	case AstType::AST_FUNCTION_CALL:
-// 		return "function call";
-// 		break;
-// 	case AstType::AST_STRING:
-// 		return "string";
-// 		break;
-// 	case AstType::AST_COMPOUND:
-// 		return "compound";
-// 		break;
-// 	case AstType::AST_NOOP:
-// 		return "no operation";
-// 		break;
-// 	default:
-// 		break;
-// 	}
-// }
 static std::string ast_to_str(AstType type)
 {
 	switch (type)
@@ -98,6 +72,19 @@ struct AST
 
 	// ast list
 	std::vector<std::shared_ptr<AST>> list_value;
+
+	// ast struct
+	std::string struct_definition_name;
+	std::vector<std::shared_ptr<AST>> struct_definition_members;
+
+	// ast struct instance
+	std::string instance_name;
+	std::vector<std::shared_ptr<AST>> instance_members;
+	std::string instance_struct_reference_name;
+
+	// ast instance member
+	std::string instance_member_name;
+	std::string instance_member_instance_name;
 
 	// error properties
 	std::string error_line_contents;

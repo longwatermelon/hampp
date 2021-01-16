@@ -3,19 +3,20 @@
 
 enum class TokenType
 {
-    TOKEN_ID, // 0
-    TOKEN_SEMI, // 1
-    TOKEN_LPAREN, // 2
-    TOKEN_RPAREN, // 3
-    TOKEN_EQUALS, // 4
+    TOKEN_ID,
+    TOKEN_SEMI,
+    TOKEN_LPAREN,
+    TOKEN_RPAREN,
+    TOKEN_EQUALS,
     TOKEN_STRING,
     TOKEN_INT,
     TOKEN_LBRACKET,
     TOKEN_RBRACKET,
-    TOKEN_COMMA, // 6
-    TOKEN_LBRACE, // 7
-    TOKEN_RBRACE, // 8
-    TOKEN_EOF // 9
+    TOKEN_COMMA,
+    TOKEN_LBRACE,
+    TOKEN_RBRACE,
+    TOKEN_PERIOD,
+    TOKEN_EOF
 };
 
 struct Token

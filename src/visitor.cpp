@@ -38,16 +38,19 @@ std::shared_ptr<AST> Visitor::builtin_function_print(std::vector<std::shared_ptr
 			case AstType::AST_STRING: std::cout << ast->string_value << " "; break;
 			case AstType::AST_BOOL: std::cout << ast->bool_value << " "; break;
 			case AstType::AST_INT: std::cout << ast->int_value << " "; break;
+			case AstType::AST_VARIABLE_DEFINITION:
 			case AstType::AST_VARIABLE: {
-				auto ast_var = goto_root_of_var(*this, ast->variable_name);
+				std::string name;
+				ast->variable_name == "" ? name = ast->variable_definition_name : name = ast->variable_name;
+				auto ast_var = goto_root_of_var(*this, name);
 				switch (ast_var->type)
 				{
-				case AstType::AST_STRING: std::cout << ast->string_value << " "; break;
-				case AstType::AST_BOOL: std::cout << ast->bool_value << " "; break;
-				case AstType::AST_INT: std::cout << ast->int_value << " "; break;
+				case AstType::AST_STRING: std::cout << ast_var->string_value << " "; break;
+				case AstType::AST_BOOL: std::cout << ast_var->bool_value << " "; break;
+				case AstType::AST_INT: std::cout << ast_var->int_value << " "; break;
 				}
 			}; break;
-			default: std::cout << ast; break;
+			default: std::cout << "Could not print variable out\n"; break;
 			}
 		}
 		
@@ -318,6 +321,9 @@ std::shared_ptr<AST> Visitor::visit(std::shared_ptr<AST> node)
 	case AstType::AST_BOOL: return visit_bool(node);
 	case AstType::AST_COMPOUND: return visit_compound(node);
 	case AstType::AST_CONDITIONAL: return visit_conditional(node);
+	case AstType::AST_STRUCT: return visit_struct_def(node);
+	case AstType::AST_STRUCT_INSTANCE: return visit_instance(node);
+	case AstType::AST_INSTANCE_MEMBER: return visit_instance_member(node);
 	case AstType::AST_NOOP: return node;
 	}
 	
@@ -333,6 +339,11 @@ std::shared_ptr<AST> Visitor::visit_vardef(std::shared_ptr<AST> node)
 		{
 			modify_variable(*this, def, node);
 		}
+	}
+
+	if (node->variable_definition_value->type == AstType::AST_STRUCT_INSTANCE)
+	{
+		visit(node->variable_definition_value);
 	}
 
 	variable_defs.emplace_back(node);
@@ -374,6 +385,25 @@ std::shared_ptr<AST> Visitor::visit_int(std::shared_ptr<AST> node)
 std::shared_ptr<AST> Visitor::visit_list(std::shared_ptr<AST> node)
 {
 	return node;
+}
+
+std::shared_ptr<AST> Visitor::visit_instance(std::shared_ptr<AST> node)
+{
+	const auto strooct = get_struct_def(node->instance_struct_reference_name);
+	for (auto& member : strooct->struct_definition_members)
+	{
+		node->instance_members.emplace_back(member);
+	}
+
+	return node;
+}
+
+std::shared_ptr<AST> Visitor::visit_instance_member(std::shared_ptr<AST> node)
+{
+	const auto instance = get_struct_def(node->instance_member_instance_name);
+	const auto member = get_instance_member(instance, node->instance_member_name);
+
+	return member;
 }
 
 std::shared_ptr<AST> Visitor::visit_compound(std::shared_ptr<AST> node)
@@ -488,6 +518,41 @@ std::shared_ptr<AST> Visitor::add_func_def(std::shared_ptr<AST> node)
 	function_defs.emplace_back(node);
 
 	return node;
+}
+
+std::shared_ptr<AST> Visitor::visit_struct_def(std::shared_ptr<AST> node)
+{
+	return add_struct_def(node);
+}
+
+std::shared_ptr<AST> Visitor::add_struct_def(std::shared_ptr<AST> node)
+{
+	struct_defs.emplace_back(node);
+
+	return node;
+}
+
+std::shared_ptr<AST> Visitor::get_struct_def(std::string name)
+{
+	for (const auto& strooct : struct_defs)
+	{
+		if (strooct->struct_definition_name == name) { return strooct; }
+	}
+
+	return nullptr;
+}
+
+std::shared_ptr<AST> Visitor::get_instance_member(std::shared_ptr<AST> instance, std::string var_name)
+{
+	for (const auto& member : instance->struct_definition_members)
+	{
+		if (member->variable_definition_name == var_name)
+		{
+			return member;
+		}
+	}
+
+	return nullptr;
 }
 
 std::shared_ptr<AST> Visitor::visit_conditional(std::shared_ptr<AST> node)

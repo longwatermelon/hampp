@@ -23,6 +23,11 @@ private:
 	std::shared_ptr<AST> parse_function_call();
 	std::shared_ptr<AST> parse_variable();
 
+	std::shared_ptr<AST> parse_struct();
+	void parse_struct_members(std::shared_ptr<AST> ast_struct);
+	std::shared_ptr<AST> parse_instance();
+	std::shared_ptr<AST> parse_instance_member(std::string instance_name);
+
 	std::shared_ptr<AST> parse_variable_definition();
 	std::shared_ptr<AST> parse_function_definition();
 

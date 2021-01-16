@@ -1,0 +1,9 @@
+strooct test
+{
+    def var = 5;
+    def var2 = 9;
+};
+
+def test = new test;
+prount(test.var);
+prount(test.var2);

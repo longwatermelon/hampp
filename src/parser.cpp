@@ -50,7 +50,6 @@ std::shared_ptr<AST> Parser::parse_list()
 {
 	eat(TokenType::TOKEN_LBRACKET);
 	const auto ast = std::make_shared<AST>(AstType::AST_LIST);
-	int intvalue;
 	while (currentToken.m_type != TokenType::TOKEN_RBRACKET)
 	{
 		switch (currentToken.m_type)
@@ -75,6 +74,7 @@ std::shared_ptr<AST> Parser::parse_expr()
 		case TokenType::TOKEN_ID: return parse_id();
 		case TokenType::TOKEN_INT: return parse_int();
 		case TokenType::TOKEN_LBRACKET: return parse_list();
+		case TokenType::TOKEN_PERIOD: return parse_instance_member(prevToken.m_value);
 	}
 
 	return std::make_shared<AST>(AstType::AST_NOOP);
@@ -93,6 +93,14 @@ std::shared_ptr<AST> Parser::parse_id()
 	else if (currentToken.m_value == "if")
 	{
 		return parse_conditional();
+	}
+	else if (currentToken.m_value == "strooct")
+	{
+		return parse_struct();
+	}
+	else if (currentToken.m_value == "new")
+	{
+		return parse_instance();
 	}
 	else
 	{
@@ -164,7 +172,6 @@ std::shared_ptr<AST> Parser::parse_function_call()
 	functionCall->function_call_name = prevToken.m_value;
 	init_error_values(functionCall);
 	eat(TokenType::TOKEN_LPAREN);
-
 	std::shared_ptr<AST> expr = parse_expr();
 	functionCall->function_call_args.emplace_back(expr);
 
@@ -193,9 +200,83 @@ std::shared_ptr<AST> Parser::parse_variable()
 		return parse_function_call();
 	}
 
+	if (currentToken.m_type == TokenType::TOKEN_PERIOD)
+	{
+		return parse_instance_member(prevToken.m_value);
+	}
+
 	ast->variable_name = tokenValue;
 
 	return ast;
+}
+
+std::shared_ptr<AST> Parser::parse_struct()
+{
+	const auto ast_struct = std::make_shared<AST>(AstType::AST_STRUCT);
+	init_error_values(ast_struct);
+	eat(TokenType::TOKEN_ID); // struct kw
+
+	ast_struct->struct_definition_name = currentToken.m_value;
+	eat(TokenType::TOKEN_ID); // struct name
+
+	eat(TokenType::TOKEN_LBRACE);
+
+	parse_struct_members(ast_struct);
+
+	eat(TokenType::TOKEN_RBRACE);
+
+	return ast_struct;
+}
+
+void Parser::parse_struct_members(std::shared_ptr<AST> ast_struct)
+{
+	std::shared_ptr<AST> statement = parse_statement();
+	if (statement->type != AstType::AST_VARIABLE_DEFINITION)
+	{
+		std::stringstream err;
+		err << "\nOnly variable definitions are allowed inside of a strooct.\n";
+		throw std::runtime_error(err.str());
+	}
+	ast_struct->struct_definition_members.emplace_back(statement);
+	
+	while (currentToken.m_type != TokenType::TOKEN_RBRACE)
+	{
+		eat(TokenType::TOKEN_SEMI);
+
+		statement = parse_statement();
+
+		if (statement != nullptr) 
+		{
+			if (statement->type != AstType::AST_VARIABLE_DEFINITION)
+			{
+				std::stringstream err;
+				err << "\nOnly variable definitions are allowed inside of a strooct.\n";
+				throw std::runtime_error(err.str());
+			}
+
+			ast_struct->struct_definition_members.emplace_back(statement); 
+		}
+	}
+}
+
+std::shared_ptr<AST> Parser::parse_instance()
+{
+	const auto instance = std::make_shared<AST>(AstType::AST_STRUCT_INSTANCE);
+	eat(TokenType::TOKEN_ID);
+	instance->instance_struct_reference_name = currentToken.m_value;
+	eat(TokenType::TOKEN_ID);
+	return instance;
+}
+
+std::shared_ptr<AST> Parser::parse_instance_member(std::string instance_name)
+{
+	eat(TokenType::TOKEN_PERIOD);
+	std::string member_name = currentToken.m_value;
+	const auto ast_instance_member = std::make_shared<AST>(AstType::AST_INSTANCE_MEMBER);
+	ast_instance_member->instance_member_name = member_name;
+	ast_instance_member->instance_member_instance_name = instance_name;
+	eat(TokenType::TOKEN_ID);
+	return ast_instance_member;
 }
 
 std::shared_ptr<AST> Parser::parse_statement()
@@ -254,15 +335,6 @@ std::shared_ptr<AST> Parser::parse_conditional()
 
 	eat(TokenType::TOKEN_LBRACE);
 
-	/*if (ast->conditional_condition->bool_value)
-	{
-		ast->conditional_body = parse_statements();
-	}
-	else
-	{
-		parse_statements();
-		ast->conditional_body = std::make_shared<AST>(AstType::AST_NOOP);
-	}*/
 	ast->conditional_body = parse_statements();
 
 	eat(TokenType::TOKEN_RBRACE);
