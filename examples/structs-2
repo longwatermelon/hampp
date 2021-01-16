@@ -5,7 +5,7 @@ strooct foo
 
 strooct goo
 {
-    def struct_name = "goo";
+    def strunt_name = "goo";
 };
 
 def foo = new foo;
@@ -13,4 +13,4 @@ def goo = new goo;
 
 prount(foo.struct_name);
 
-prount(goo.struct_name);
+prount(goo.strunt_name);

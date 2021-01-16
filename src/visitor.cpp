@@ -403,7 +403,6 @@ std::shared_ptr<AST> Visitor::visit_instance(std::shared_ptr<AST> node)
 		node->instance_members.emplace_back(member);
 	}
 
-	visit_vardef(node);
 	return node;
 }
 
