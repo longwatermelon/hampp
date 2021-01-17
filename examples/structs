@@ -8,9 +8,8 @@ strooct test
 };
 
 def testing = new test;
-prount(testing.var);
-prount(testing.var2);
-prount(testing.var3);
+prount("var =", testing.var, "var2 =", testing.var2, "var3 =", testing.var3);
 
-def testing.var = 4000;
-prount(testing.var);
+def testing.var = 100;
+prount("after modifying testing.var:");
+prount("var =", testing.var);
