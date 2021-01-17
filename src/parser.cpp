@@ -2,6 +2,7 @@
 #include "../include/AST.h"
 #include <iostream>
 #include <sstream>
+#include <map>
 
 Parser::Parser(std::string ctns)
 {
@@ -19,8 +20,34 @@ void Parser::eat(TokenType token)
 	}
 	else
 	{
+		std::string expected_token;
+		// switch (token)
+		// {
+		// 	case TokenType::TOKEN_COMMA: expected_token = ","; break;
+		// 	case TokenType::TOKEN_EQUALS: expected_token = "="; break;
+		// 	case TokenType::TOKEN_ID: expected_token = "identifier"; break;
+		// 	case TokenType::TOKEN_INT: expected_token = "int"; break;
+		// 	case TokenType::TOKEN_STRING: expected_token = "string"; break;
+		// 	case TokenType::TOKEN_LBRACE: expected_token = "{"; break;
+		// 	case TokenType::TOKEN_RBRACE: expected_token = "}"; break;
+		// }
+		std::map<TokenType, std::string> token_repr {
+			{TokenType::TOKEN_COMMA, ","},
+			{TokenType::TOKEN_EQUALS, "="},
+			{TokenType::TOKEN_ID, "identifier"},
+			{TokenType::TOKEN_INT, "int"},
+			{TokenType::TOKEN_STRING, "string"},
+			{TokenType::TOKEN_LBRACE, "{"},
+			{TokenType::TOKEN_RBRACE, "}"},
+			{TokenType::TOKEN_LBRACKET, "["},
+			{TokenType::TOKEN_RBRACKET, "]"},
+			{TokenType::TOKEN_PERIOD, "."},
+			{TokenType::TOKEN_LPAREN, "("},
+			{TokenType::TOKEN_RPAREN, ")"},
+			{TokenType::TOKEN_SEMI, ";"}
+		};
 		std::stringstream msg;
-		msg << "Unexpected token '" << lexer.contents.at(lexer.prev_index) << "' at line " << lexer.lineNum << ": \n" << lexer.collect_line() << "\n" << lexer.display_issue() << std::endl;
+		msg << "Unexpected token '" << lexer.contents.at(lexer.prev_index) << "' at line " << lexer.lineNum << ": \n" << lexer.collect_line() << "\n" << lexer.display_issue() << "\nExpected: " << token_repr[token] << std::endl;
 		throw std::runtime_error(msg.str());
 	}
 }
