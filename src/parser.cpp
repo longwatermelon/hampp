@@ -21,16 +21,6 @@ void Parser::eat(TokenType token)
 	else
 	{
 		std::string expected_token;
-		// switch (token)
-		// {
-		// 	case TokenType::TOKEN_COMMA: expected_token = ","; break;
-		// 	case TokenType::TOKEN_EQUALS: expected_token = "="; break;
-		// 	case TokenType::TOKEN_ID: expected_token = "identifier"; break;
-		// 	case TokenType::TOKEN_INT: expected_token = "int"; break;
-		// 	case TokenType::TOKEN_STRING: expected_token = "string"; break;
-		// 	case TokenType::TOKEN_LBRACE: expected_token = "{"; break;
-		// 	case TokenType::TOKEN_RBRACE: expected_token = "}"; break;
-		// }
 		std::map<TokenType, std::string> token_repr {
 			{TokenType::TOKEN_COMMA, ","},
 			{TokenType::TOKEN_EQUALS, "="},
