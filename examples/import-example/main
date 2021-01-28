@@ -1,0 +1,7 @@
+import "examples/import-example/imported";
+
+prount(variable);
+def new_var = 5;
+
+foo(variable);
+foo(new_var);

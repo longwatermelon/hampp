@@ -499,7 +499,7 @@ std::shared_ptr<AST> Visitor::visit_func_call(std::shared_ptr<AST> node)
 
 		const auto ast = visit(func_def->function_definition_body);
 
-		builtin_function_destroy(node->function_call_args);
+		builtin_function_destroy(func_def->function_definition_params);
 	}
 	else
 	{

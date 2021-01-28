@@ -1,0 +1,6 @@
+def variable = "your mom";
+
+func foo(arg)
+{
+    prount(arg);
+};
