@@ -6,6 +6,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <fstream>
+#include <map>
 
 Visitor::Visitor()
 {
@@ -437,10 +438,9 @@ std::shared_ptr<AST> Visitor::visit_func_call(std::shared_ptr<AST> node)
 
 	if (node->function_call_name == "subtract") { return builtin_function_subtract(node->function_call_args, node); }
 
-	if (node->function_call_name == "random_randint") { return builtin_function_random_randint(node->function_call_args, node, *this); }
-
 	if (node->function_call_name == "index") { return builtin_function_index(node->function_call_args, node); }
 
+	
 	std::shared_ptr<AST> func_def = get_func_def(node->function_call_name);
 
 	if (func_def == nullptr)
