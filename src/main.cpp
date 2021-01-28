@@ -36,50 +36,41 @@ std::string getTokenName(TokenType type)
     return "";
 }
 
-int main(int argc, char* argv[])
+
+std::string read_file(std::string fp)
 {
-    // printf("%s\n", get_file_contents(argv[1]));
     std::ifstream infile;
-    infile.open(argv[1]);
+    infile.open(fp);
     std::stringstream contents;
     std::string line;
-    while (std::getline(infile, line))
-    {
-        //std::cout << line << "\n";
-        contents << line << std::endl;
-    }
+    while (std::getline(infile, line)) contents << line << "\n";
+    
     infile.close();
+    return contents.str();
+}
 
-    //Parser parser("def name = \"john\";\nprount(\"hello world\");\nprount(name);");
+
+void run_file(Parser* parser, Visitor* visitor, std::string contents)
+{
+    std::shared_ptr<AST> root = parser->parse();
+    visitor->visit(root);
+}
+
+
+int main(int argc, char* argv[])
+{
+    std::string contents = read_file(argv[1]);
+    Parser parser(contents);
+    Visitor visitor{};
    
     try
     {
-        Parser parser(contents.str());
-        std::shared_ptr<AST> root = parser.parse();
-        Visitor visitor = Visitor();
-        visitor.visit(root);
+        run_file(&parser, &visitor, contents);
     }
     catch (const std::runtime_error& ex)
     {
         std::cout << ex.what();
     }
-    /*Lexer lexer(contents.str());
-    while (lexer.index < lexer.contents.size())
-    {
-        const auto token = lexer.get_next_token();
-        std::cout << getTokenName(token.m_type) << ": " << token.m_value
-            << std::endl << "========================" << std::endl;
-    }*/
-    //parser_T* parser = init_parser(lexer);
-    //// printf("creating root node\n");
-    //AST_T* root = parser_parse(parser);
-    //// printf("creating visitor\n");
-    //visitor_T* visitor = init_visitor();
-    //// printf("visiting\n");
-    //visitor_visit(visitor, root);
-
-    // printf("%d\n", root->type);
-    // printf("%d\n", root->compound_size);
 
     return 0;
 }

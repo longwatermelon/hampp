@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <ctime>
 #include <cstdlib>
+#include <fstream>
 
 Visitor::Visitor()
 {
@@ -53,7 +54,6 @@ std::shared_ptr<AST> Visitor::builtin_function_print(std::vector<std::shared_ptr
 			default: std::cout << "Could not print variable out\n"; break;
 			}
 		}
-		
 	}
 
 	std::cout << std::endl;
@@ -325,6 +325,7 @@ std::shared_ptr<AST> Visitor::visit(std::shared_ptr<AST> node)
 	case AstType::AST_STRUCT_INSTANCE: return visit_instance(node);
 	case AstType::AST_INSTANCE_MEMBER: return visit_instance_member(node);
 	case AstType::AST_INSTANCE_MEMBER_MODIFICATION: return modify_instance_member(node);
+	case AstType::AST_IMPORT: return visit_import(node);
 	case AstType::AST_NOOP: return node;
 	}
 	
@@ -611,6 +612,22 @@ std::shared_ptr<AST> Visitor::visit_conditional(std::shared_ptr<AST> node)
 		node->conditional_body = std::make_shared<AST>(AstType::AST_NOOP);
 		return visit(node->conditional_body);
 	}
+}
+
+std::shared_ptr<AST> Visitor::visit_import(std::shared_ptr<AST> node)
+{
+	std::ifstream infile;
+	infile.open(node->import_path);
+	std::stringstream contents;
+	std::string line;
+	while (std::getline(infile, line)) contents << line << "\n";
+	infile.close();
+
+	Parser import_parser(contents.str());
+	std::shared_ptr<AST> root = import_parser.parse();
+	this->visit(root);
+
+	return node;
 }
 
 void Visitor::check_compatible_types(AstType type1, AstType type2, std::shared_ptr<AST> arg)

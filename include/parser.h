@@ -40,5 +40,7 @@ private:
 
 	std::shared_ptr<AST> parse_instance_member_modification();
 
+	std::shared_ptr<AST> parse_import();
+
 	void init_error_values(std::shared_ptr<AST> node);
 };

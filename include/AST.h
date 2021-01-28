@@ -19,6 +19,7 @@ enum class AstType
 	AST_LIST,
 	AST_COMPOUND,
 	AST_CONDITIONAL,
+	AST_IMPORT,
 	AST_NOOP
 };
 
@@ -91,6 +92,9 @@ struct AST
 	std::string modified_instance_name;
 	std::shared_ptr<AST> modified_member_value;
 	std::string modified_member_name;
+
+	// ast import
+	std::string import_path;
 
 	// error properties
 	std::string error_line_contents;

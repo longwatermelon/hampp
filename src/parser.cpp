@@ -119,6 +119,10 @@ std::shared_ptr<AST> Parser::parse_id()
 	{
 		return parse_instance();
 	}
+	else if (currentToken.m_value == "import")
+	{
+		return parse_import();
+	}
 	else
 	{
 		return parse_variable();
@@ -383,6 +387,16 @@ std::shared_ptr<AST> Parser::parse_instance_member_modification()
 	ast->modified_member_value = parse_expr();
 
 	return ast;
+}
+
+std::shared_ptr<AST> Parser::parse_import()
+{
+	const auto ast_import = std::make_shared<AST>(AstType::AST_IMPORT);
+	eat(TokenType::TOKEN_ID);
+	ast_import->import_path = currentToken.m_value;
+	eat(TokenType::TOKEN_STRING);
+
+	return ast_import;
 }
 
 void Parser::init_error_values(std::shared_ptr<AST> node)

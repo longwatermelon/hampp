@@ -50,5 +50,7 @@ struct Visitor
 
 	std::shared_ptr<AST> visit_conditional(std::shared_ptr<AST> node);
 
+	std::shared_ptr<AST> visit_import(std::shared_ptr<AST> node);
+
 	void check_compatible_types(AstType type1, AstType type2, std::shared_ptr<AST> arg);
 };
