@@ -3,9 +3,9 @@
 
 namespace colors
 {
-	std::string version = "default";
+	inline std::string version = "default";
 
-	std::string get_color(std::string color_name)
+	inline std::string get_color(std::string color_name)
 	{
 		if (version == "discord") return ""; // colors don't work in discord
 

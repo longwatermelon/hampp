@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
     }
     catch (const std::runtime_error& ex)
     {
-        std::cout << ex.what();
+        std::cout << "Error in file " << colors::get_color("yellow") << argv[1] << colors::get_color("reset") << ex.what();
     }
 
     return 0;

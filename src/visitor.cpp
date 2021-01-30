@@ -1,4 +1,5 @@
-#include "..\include\visitor.h"
+#include "../include/visitor.h"
+#include "../include/colors.h"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -234,7 +235,7 @@ std::shared_ptr<AST> Visitor::builtin_function_add(std::vector<std::shared_ptr<A
 	if (args.size() != 2)
 	{
 		std::stringstream err;
-		err << "Line " << node->error_line_num << ":\n" << node->error_line_contents << "\n'add' takes two arguments (variable, amount) but "
+		err << "on line " << node->error_line_num << ":\n" << node->error_line_contents << "\n'add' takes two arguments (variable, amount) but "
 			<< args.size() << " arguments were supplied.";
 		throw std::runtime_error(err.str());
 	}
@@ -249,7 +250,7 @@ std::shared_ptr<AST> Visitor::builtin_function_subtract(std::vector<std::shared_
 	if (args.size() != 2)
 	{
 		std::stringstream err;
-		err << "Line " << node->error_line_num << ":\n" << node->error_line_contents << "\n'subtract' takes two arguments (variable, amount) but "
+		err << "on line " << node->error_line_num << ":\n" << node->error_line_contents << "\n'subtract' takes two arguments (variable, amount) but "
 			<< args.size() << " arguments were supplied.";
 		throw std::runtime_error(err.str());
 	}
@@ -264,7 +265,7 @@ std::shared_ptr<AST> Visitor::builtin_function_index(std::vector<std::shared_ptr
 	if (args.size() != 2)
 	{
 		std::stringstream err;
-		err << "Index takes 2 arguments (list, index) but " << args.size() << " arguments were supplied.\n";
+		err << " on line " << node->error_line_num << ":\nIndex takes 2 arguments (list, index) but " << args.size() << " arguments were supplied.\n";
 		throw std::runtime_error(err.str());
 	}
 
@@ -288,7 +289,7 @@ std::shared_ptr<AST> Visitor::builtin_function_index(std::vector<std::shared_ptr
 	if (index >= list->variable_definition_value->list_value.size())
 	{
 		std::stringstream err;
-		err << "Index out of range: " << list->variable_definition_name << " has a size of " << list->variable_definition_value->list_value.size() << "\n";
+		err << " on line " << node->error_line_num << ":\nIndex out of range: " << list->variable_definition_name << " has a size of " << list->variable_definition_value->list_value.size() << "\n";
 		throw std::runtime_error(err.str());
 	}
 
@@ -348,7 +349,9 @@ std::shared_ptr<AST> Visitor::visit(std::shared_ptr<AST> node)
 	case AstType::AST_NOOP: return node;
 	}
 	
-	throw std::runtime_error("Uncaught statement\n");
+	std::stringstream err;
+	err << " on line " << node->error_line_num << ":\nUncaught statement\n";
+	throw std::runtime_error(err.str());
 	return nullptr;
 }
 
@@ -389,8 +392,10 @@ std::shared_ptr<AST> Visitor::visit_var(std::shared_ptr<AST> node)
 	}
 
 	std::stringstream msg;
-	msg << "\nUndefined variable '" << node->variable_name << "' on line " <<
-		node->error_line_num << ":\n" << node->error_line_contents << "\n" << node->error_arrow << "\n";
+	//msg << "\nUndefined variable '" << node->variable_name << "' on line " <<
+		//node->error_line_num << ":\n" << node->error_line_contents << "\n" << node->error_arrow << "\n";
+	msg << " on line " << node->error_line_num << ":\n" << node->error_line_contents << "\n" << node->error_arrow << "\nUndefined variable '"
+		<< node->variable_name << "'\n";
 	throw std::runtime_error(msg.str());
 	return nullptr;
 }
@@ -464,9 +469,8 @@ std::shared_ptr<AST> Visitor::visit_func_call(std::shared_ptr<AST> node)
 	if (func_def == nullptr)
 	{
 		std::stringstream msg;
-		msg << "\nUndefined method '" << node->function_call_name << "' on line " 
-			<< node->error_line_num << ":\n" << node->error_line_contents << "\n" 
-			<< node->error_arrow << std::endl;
+		msg << " on line " << node->error_line_num << ":\n" << node->error_line_contents << "\n"
+			<< node->error_arrow << "\nUndefined method '" << node->function_call_name << "'\n";
 		throw std::runtime_error(msg.str());
 
 	}
@@ -492,7 +496,7 @@ std::shared_ptr<AST> Visitor::visit_func_call(std::shared_ptr<AST> node)
 		}
 		else
 		{
-			err << "\nLine " << node->error_line_num << ":\n" << node->error_line_contents << "\n" << "Error: Function '" << func_def->function_definition_name << "' takes " << func_def->function_definition_params.size() << " arguments (" << param_display << ") but " << node->function_call_args.size() << " arguments were supplied.\n";
+			err << " on line " << node->error_line_num << ":\n" << node->error_line_contents << "\n" << "Error: Function '" << func_def->function_definition_name << "' takes " << func_def->function_definition_params.size() << " arguments (" << param_display << ") but " << node->function_call_args.size() << " arguments were supplied.\n";
 			throw std::runtime_error(err.str());
 		}
 		
@@ -642,8 +646,16 @@ std::shared_ptr<AST> Visitor::visit_import(std::shared_ptr<AST> node)
 	infile.close();
 
 	Parser import_parser(contents.str());
-	std::shared_ptr<AST> root = import_parser.parse();
-	this->visit(root);
+
+	try
+	{
+		std::shared_ptr<AST> root = import_parser.parse();
+		this->visit(root);
+	}
+	catch (const std::runtime_error& ex)
+	{
+		std::cout << "\nError in file " << colors::get_color("yellow") << node->import_path << colors::get_color("reset") << ex.what();
+	}
 
 	return node;
 }
@@ -653,7 +665,7 @@ void Visitor::check_compatible_types(AstType type1, AstType type2, std::shared_p
 	if (type1 != type2)
 	{
 		std::stringstream err;
-		err << "\nLine " << arg->error_line_num << ":\n" << arg->error_line_contents << "\nIncompatible types: Cannot compare " << ast_to_str(type1) << " with " << ast_to_str(type2);
+		err << " on line " << arg->error_line_num << ":\n" << arg->error_line_contents << "\nIncompatible types: Cannot compare " << ast_to_str(type1) << " with " << ast_to_str(type2);
 		throw std::runtime_error(err.str());
 	}
 }

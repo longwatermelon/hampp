@@ -21,6 +21,7 @@ void Parser::eat(TokenType token)
 	else
 	{
 		std::string expected_token;
+		
 		std::map<TokenType, std::string> token_repr {
 			{TokenType::TOKEN_COMMA, ","},
 			{TokenType::TOKEN_EQUALS, "="},
@@ -36,8 +37,9 @@ void Parser::eat(TokenType token)
 			{TokenType::TOKEN_RPAREN, ")"},
 			{TokenType::TOKEN_SEMI, ";"}
 		};
+
 		std::stringstream msg;
-		msg << "Unexpected token '" << lexer.contents.at(lexer.prev_index) << "' at line " << lexer.lineNum << ": \n" << lexer.collect_line() << "\n" << lexer.display_issue() << "\nExpected: " << token_repr[token] << std::endl;
+		msg << " on line " << lexer.lineNum << ":\nUnexpected token '" << lexer.contents.at(lexer.prev_index) << "':\n" << lexer.collect_line() << "\n" << lexer.display_issue() << "\nExpected: " << token_repr[token] << std::endl;
 		throw std::runtime_error(msg.str());
 	}
 }
