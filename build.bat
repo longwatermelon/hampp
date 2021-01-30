@@ -1,1 +1,1 @@
-g++ -I src -I modules src/*.cpp modules/*.cpp -o build/hampp
+g++ -I src -I C:\Users\qianh\OneDrive\Documents\code\cpp\json-lib\headers src/*.cpp -o build/hampp -std=c++17

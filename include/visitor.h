@@ -4,10 +4,12 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <map>
 
 struct Visitor
 {
-	Visitor();
+	Visitor(std::map<std::string, std::string> config_map);
+	std::map<std::string, std::string> config;
 
 	/* built in functions */
 	std::shared_ptr<AST> builtin_function_print(std::vector<std::shared_ptr<AST>> args);

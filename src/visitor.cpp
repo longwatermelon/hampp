@@ -8,7 +8,8 @@
 #include <fstream>
 #include <map>
 
-Visitor::Visitor()
+Visitor::Visitor(std::map<std::string, std::string> config_map)
+	: config(config_map)
 {
 	const auto const_true = std::make_shared<AST>(AstType::AST_VARIABLE_DEFINITION);
 	const auto ast_bool = std::make_shared<AST>(AstType::AST_BOOL);
@@ -310,6 +311,23 @@ std::shared_ptr<AST> Visitor::builtin_function_index(std::vector<std::shared_ptr
 
 std::shared_ptr<AST> Visitor::visit(std::shared_ptr<AST> node)
 {
+	if (config["platform"] == "discord") // very funny troll
+	{
+		if (variable_defs.size() >= 2 + 3) // builtin variables don't count (true, false)
+		{
+			std::stringstream err;
+			err << "\x1B[31mWow it sure looks like you are having fun using hampp there. Be a real shame if there was some limit on how many variables you could define...\x1B[0m\n";
+			throw std::runtime_error(err.str());
+		}
+
+		if (function_defs.size() >= 3)
+		{
+			std::stringstream err;
+			err << "\x1B[31mWow it sure looks like you are having fun using hampp there. Be a real shame if there was some limit on how many functions you could define...\x1B[0m\n";
+			throw std::runtime_error(err.str());
+		}
+	}
+
 	switch (node->type)
 	{
 	case AstType::AST_VARIABLE_DEFINITION: return visit_vardef(node);

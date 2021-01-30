@@ -1,40 +1,10 @@
 #include "../include/lexer.h"
 #include "../include/parser.h"
 #include "../include/visitor.h"
+#include <jsonlib.h> // https://github.com/longwatermelon/simple-json-lib
 #include <fstream>
 #include <sstream>
 #include <iostream>
-
-
-std::string getTokenName(TokenType type)
-{
-    switch (type)
-    {
-    case TokenType::TOKEN_ID:
-        return "ID";
-    case TokenType::TOKEN_SEMI:
-        return "SemiColen";
-    case TokenType::TOKEN_LPAREN:
-        return "LeftParen";
-    case TokenType::TOKEN_RPAREN:
-        return "RightParen";
-    case TokenType::TOKEN_EQUALS:
-        return "Equal";
-    case TokenType::TOKEN_STRING:
-        return "String";
-    case TokenType::TOKEN_COMMA:
-        return "Comma";
-    case TokenType::TOKEN_LBRACE:
-        return "LeftBrace";
-    case TokenType::TOKEN_RBRACE:
-        return "RightBrace";
-    case TokenType::TOKEN_EOF:
-        return "EndOfFile";
-    default:
-        break;
-    }
-    return "";
-}
 
 
 std::string read_file(std::string fp)
@@ -59,9 +29,37 @@ void run_file(Parser* parser, Visitor* visitor, std::string contents)
 
 int main(int argc, char* argv[])
 {
+    // load optional hampp configurations
+    const int config_size = 2;
+
+    std::string config_path = ".";
+    if (argc >= 3) { config_path = argv[2]; }
+
+
+    std::map <std::string, std::string> config{
+        {"version", "default"},
+        {"platform", "default"}
+    };
+
+    try
+    {
+        config = json::load<std::string, std::string>(config_path + "/hamppconfig.json");
+        if (config.size() != config_size)
+        {
+            std::cout << "\x1B[31mThe configuration file should contain version and platform.\nFor default configuration, set both values to \"default\".\x1B[0m\n";
+            config["version"] = "default";
+            config["platform"] = "default";
+        }
+    }
+    catch (const std::runtime_error&)
+    {
+        std::cout << "\x1B[33mWarning: Failed to read hampp configuration file (\"hamppconfig.json\") in current directory.\033[0m\n";
+        std::cout << "\x1B[33mSpecify a path to a configuration file when running hampp or create a configuration file in the current directory.\033[0m\n";
+    }
+
     std::string contents = read_file(argv[1]);
     Parser parser(contents);
-    Visitor visitor{};
+    Visitor visitor{config};
    
     try
     {
