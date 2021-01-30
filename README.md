@@ -2,7 +2,7 @@
 
 ham written in cpp
 
-If you want to build the project yourself, download simple-json-lib from https://github.com/longwatermelon/simple-json-lib and then use
+If you want to build the project yourself, download simple-json-lib from [here](https://github.com/longwatermelon/simple-json-lib) and then use
 
 ```
 g++ -I src -I (directory jsonlib.h is in) src/*.cpp -o build/hampp -std=c++17
