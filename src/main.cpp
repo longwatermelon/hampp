@@ -1,6 +1,7 @@
 #include "../include/lexer.h"
 #include "../include/parser.h"
 #include "../include/visitor.h"
+#include "../include/colors.h"
 #include <jsonlib.h> // https://github.com/longwatermelon/simple-json-lib
 #include <fstream>
 #include <sstream>
@@ -30,31 +31,33 @@ void run_file(Parser* parser, Visitor* visitor, std::string contents)
 int main(int argc, char* argv[])
 {
     // load optional hampp configurations
-    const int config_size = 2;
+    const int config_size = 1;
 
     std::string config_path = ".";
     if (argc >= 3) { config_path = argv[2]; }
 
 
     std::map <std::string, std::string> config{
-        {"version", "default"},
         {"platform", "default"}
     };
 
     try
     {
         config = json::load<std::string, std::string>(config_path + "/hamppconfig.json");
+        colors::version = config["version"];
+
         if (config.size() != config_size)
         {
-            std::cout << "\x1B[31mThe configuration file should contain version and platform.\nFor default configuration, set both values to \"default\".\x1B[0m\n";
+            std::cout << colors::get_color("red") << "The configuration file should contain version.\nFor default configuration, set version to \"default\"."
+                << colors::get_color("reset") << "\n";
             config["version"] = "default";
-            config["platform"] = "default";
+            colors::version = "default";
         }
     }
     catch (const std::runtime_error&)
     {
-        std::cout << "\x1B[33mWarning: Failed to read hampp configuration file (\"hamppconfig.json\") in current directory.\033[0m\n";
-        std::cout << "\x1B[33mSpecify a path to a configuration file when running hampp or create a configuration file in the current directory.\033[0m\n";
+        std::cout << colors::get_color("yellow") <<  "Warning: Failed to read hampp configuration file (\"hamppconfig.json\") in current directory.\n";
+        std::cout << "Specify a path to a configuration file when running hampp or create a configuration file in the current directory." << colors::get_color("reset") << "\n";
     }
 
     std::string contents = read_file(argv[1]);

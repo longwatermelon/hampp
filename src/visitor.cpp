@@ -311,19 +311,19 @@ std::shared_ptr<AST> Visitor::builtin_function_index(std::vector<std::shared_ptr
 
 std::shared_ptr<AST> Visitor::visit(std::shared_ptr<AST> node)
 {
-	if (config["platform"] == "discord") // very funny troll
+	if (config["version"] == "discord") // very funny troll
 	{
 		if (variable_defs.size() >= 2 + 3) // builtin variables don't count (true, false)
 		{
 			std::stringstream err;
-			err << "\x1B[31mWow it sure looks like you are having fun using hampp there. Be a real shame if there was some limit on how many variables you could define...\x1B[0m\n";
+			err << ">> Wow it sure looks like you are having fun using hampp there. Be a real shame if there was some limit on how many variables you could define...\n";
 			throw std::runtime_error(err.str());
 		}
 
 		if (function_defs.size() >= 3)
 		{
 			std::stringstream err;
-			err << "\x1B[31mWow it sure looks like you are having fun using hampp there. Be a real shame if there was some limit on how many functions you could define...\x1B[0m\n";
+			err << ">> Wow it sure looks like you are having fun using hampp there. Be a real shame if there was some limit on how many functions you could define...\n";
 			throw std::runtime_error(err.str());
 		}
 	}
