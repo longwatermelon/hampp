@@ -8,8 +8,9 @@ If you want to build the project yourself, download simple-json-lib from [here](
 g++ -I src -I (directory jsonlib.h is in) src/*.cpp -o build/hampp -std=c++17
 ```
 
-# massive bug that i refuse to fix
-if any struct has a member name the same as a struct member previously defined, hampp will find the first occurrence of the name when referencing that variable.
+# i am aware that struct members must all be named uniquely regardless of if they are members of different structs or not.
+
+i just didnt want to refactor my code again
 
 example
 
@@ -26,10 +27,7 @@ strooct bar
 
 def foo = new foo;
 def bar = new bar;
-
 prount(foo.name, bar.name);
 ```
 
 prints `foo foo`
-
-probably will not be fixed because i have to do a massive refactor to fix this
