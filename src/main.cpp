@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 
 
     std::map <std::string, std::string> config{
-        {"platform", "default"}
+        {"version", "default"}
     };
 
     try
