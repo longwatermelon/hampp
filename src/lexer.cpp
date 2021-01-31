@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <ctype.h>
 #include <sstream>
+#include <iostream>
 
 Lexer::Lexer() = default;
 
@@ -14,6 +15,7 @@ Lexer::Lexer(std::string ctn)
 	}
 	else
 	{
+		std::cout << "Could not find file.\n";
 		exit(0);
 	}
 }
