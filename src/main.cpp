@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
 
     try
     {
-        config = json::load<std::string, std::string>(config_path + "/hamppconfig.json");
+        config = json::load<std::string>(config_path + "/hamppconfig.json");
         colors::version = config["version"];
 
         if (config.size() != config_size)
